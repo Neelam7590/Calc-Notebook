@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Calc Notebook"
+description = "A friendly single-page calculator notebook with EMI, age, percentage, BMI, and GST tools that switch instantly without page reloads."
+version = "1.0.0"
+id = "artifacts/calc-notebook"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20593
+
+[services.development]
+run = "pnpm --filter @workspace/calc-notebook run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/calc-notebook", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/calc-notebook/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20593"
+BASE_PATH = "/"
