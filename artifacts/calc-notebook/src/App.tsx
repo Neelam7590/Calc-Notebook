@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -23,8 +23,9 @@ import {
   WalletCards,
   type LucideIcon,
 } from 'lucide-react';
-import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
+import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import NotFound from '@/pages/not-found';
+import { calculatorSeoContent, homeSeoSections, type SeoSection } from './seoContent';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,8 @@ type CalculatorMeta = {
   tint: string;
   number: string;
 };
+
+const calculatorPath = (id: CalculatorId) => `/${id}-calculator`;
 
 const calculatorMeta: CalculatorMeta[] = [
   {
@@ -110,10 +113,15 @@ const todayString = () => {
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 };
 
-function Home({ onSelect }: { onSelect: (id: CalculatorId) => void }) {
+function Home() {
   return (
     <main className="notebook-page min-h-[100dvh]">
       <div className="mx-auto max-w-6xl px-5 py-5 sm:px-8 sm:py-8">
+        <PageSeo
+          title="Calc Notebook - Simple EMI, Age, Percentage, BMI & GST Calculators"
+          description="Free, clear online calculators for EMI, age, percentage, BMI, and GST. Get practical answers without the spreadsheet feeling."
+          path="/"
+        />
         <TopBar />
         <section className="home-intro animate-rise" aria-labelledby="welcome-title">
           <div className="home-kicker">
@@ -136,11 +144,12 @@ function Home({ onSelect }: { onSelect: (id: CalculatorId) => void }) {
           </div>
         </section>
 
+        <SimpleCalculator />
+
         <section className="calculator-list" aria-labelledby="calculator-list-title">
           <div className="section-caption">
-            <span id="calculator-list-title">Choose a calculation</span>
+            <h2 id="calculator-list-title">Choose a calculation</h2>
             <span className="section-rule" />
-            <span className="section-count">05 pages</span>
           </div>
           <div className="calculator-grid">
             {calculatorMeta.map((calculator, index) => (
@@ -148,11 +157,12 @@ function Home({ onSelect }: { onSelect: (id: CalculatorId) => void }) {
                 key={calculator.id}
                 calculator={calculator}
                 index={index}
-                onSelect={onSelect}
               />
             ))}
           </div>
         </section>
+
+        <HomeSeoContent />
 
         <footer className="home-footer">
           <span className="footer-mark">CN</span>
@@ -163,7 +173,291 @@ function Home({ onSelect }: { onSelect: (id: CalculatorId) => void }) {
   );
 }
 
-function TopBar() {
+function HomeSeoContent() {
+  return (
+    <section className="seo-content home-seo" aria-labelledby="home-seo-title">
+      <div className="seo-content-intro">
+        <span className="home-kicker"><span className="kicker-line" /><span>THE NOTEBOOK GUIDE</span></span>
+        <h2 id="home-seo-title">Useful calculators for the numbers in your day.</h2>
+        <p>Browse a focused calculator page below whenever you need a reliable first answer. Each page includes the tool, a plain-language explanation, examples, and answers to common questions.</p>
+      </div>
+      <div className="home-seo-grid">
+        {homeSeoSections.map((section) => (
+          <article className="home-seo-card" key={section.heading}>
+            <h3>{section.heading}</h3>
+            {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SimpleCalculator() {
+  const [display, setDisplay] = useState('0');
+  const [stored, setStored] = useState<number | null>(null);
+  const [operator, setOperator] = useState<string | null>(null);
+  const [waitingForOperand, setWaitingForOperand] = useState(false);
+  const [lastExpression, setLastExpression] = useState<string | null>(null);
+
+  const clear = () => {
+    setDisplay('0');
+    setStored(null);
+    setOperator(null);
+    setWaitingForOperand(false);
+    setLastExpression(null);
+  };
+
+  const inputDigit = (digit: string) => {
+    if (waitingForOperand) {
+      setDisplay(digit);
+      setWaitingForOperand(false);
+      setLastExpression(null);
+      return;
+    }
+    setDisplay(display === '0' || display === 'Error' ? digit : display.length < 14 ? `${display}${digit}` : display);
+  };
+
+  const inputDecimal = () => {
+    if (waitingForOperand) {
+      setDisplay('0.');
+      setWaitingForOperand(false);
+      setLastExpression(null);
+    } else if (!display.includes('.')) {
+      setDisplay(`${display}.`);
+    }
+  };
+
+  const backspace = () => {
+    if (waitingForOperand) return;
+    if (display === 'Error' || display.length <= 1 || (display.length === 2 && display.startsWith('-'))) {
+      setDisplay('0');
+      return;
+    }
+    setDisplay(display.slice(0, -1));
+  };
+
+  const calculate = (left: number, right: number, nextOperator: string) => {
+    if (nextOperator === '+') return left + right;
+    if (nextOperator === '-') return left - right;
+    if (nextOperator === '×') return left * right;
+    return right === 0 ? Number.NaN : left / right;
+  };
+
+  const displayOperator = (nextOperator: string) => nextOperator === '-' ? '−' : nextOperator;
+
+  const chooseOperator = (nextOperator: string) => {
+    const value = Number(display);
+    if (Number.isNaN(value)) return;
+    if (stored !== null && operator && !waitingForOperand) {
+      const result = calculate(stored, value, operator);
+      setDisplay(Number.isFinite(result) ? String(result) : 'Error');
+      setStored(Number.isFinite(result) ? result : null);
+    } else {
+      setStored(value);
+    }
+    setOperator(nextOperator);
+    setWaitingForOperand(true);
+    setLastExpression(null);
+  };
+
+  const equals = () => {
+    if (stored === null || !operator) return;
+    const right = Number(display);
+    const result = calculate(stored, right, operator);
+    setLastExpression(`${stored} ${displayOperator(operator)} ${display}`);
+    setDisplay(Number.isFinite(result) ? String(result) : 'Error');
+    setStored(null);
+    setOperator(null);
+    setWaitingForOperand(true);
+  };
+
+  const toggleSign = () => {
+    if (display === '0' || display === 'Error') return;
+    setDisplay(display.startsWith('-') ? display.slice(1) : `-${display}`);
+  };
+
+  const percent = () => {
+    const value = Number(display);
+    if (!Number.isNaN(value)) setDisplay(String(value / 100));
+  };
+
+  const buttons = [
+    { label: 'AC', action: clear, className: 'simple-button-muted' },
+    { label: '⌫', action: backspace, className: 'simple-button-muted' },
+    { label: '±', action: toggleSign, className: 'simple-button-muted' },
+    { label: '%', action: percent, className: 'simple-button-muted' },
+    { label: '÷', action: () => chooseOperator('÷'), className: 'simple-button-operator' },
+    { label: '7', action: () => inputDigit('7') },
+    { label: '8', action: () => inputDigit('8') },
+    { label: '9', action: () => inputDigit('9') },
+    { label: '×', action: () => chooseOperator('×'), className: 'simple-button-operator' },
+    { label: '4', action: () => inputDigit('4') },
+    { label: '5', action: () => inputDigit('5') },
+    { label: '6', action: () => inputDigit('6') },
+    { label: '−', action: () => chooseOperator('-'), className: 'simple-button-operator' },
+    { label: '1', action: () => inputDigit('1') },
+    { label: '2', action: () => inputDigit('2') },
+    { label: '3', action: () => inputDigit('3') },
+    { label: '+', action: () => chooseOperator('+'), className: 'simple-button-operator' },
+    { label: '0', action: () => inputDigit('0'), className: 'simple-button-zero' },
+    { label: '.', action: inputDecimal },
+    { label: '=', action: equals, className: 'simple-button-equals' },
+  ];
+
+  return (
+    <section className="simple-calculator" aria-labelledby="simple-calculator-title">
+      <div className="simple-calculator-copy">
+        <span className="card-eyebrow">A QUICK SCRATCHPAD</span>
+        <h2 id="simple-calculator-title">Simple calculator</h2>
+        <p>For the little sums that do not need a whole page. Add, subtract, multiply, divide, or find a quick percentage.</p>
+      </div>
+      <div className="simple-calculator-body">
+        <div className="simple-display" aria-live="polite">
+          <div className={`simple-expression${lastExpression ? ' simple-expression-visible' : ''}`}>
+            {lastExpression || (stored !== null && operator ? `${stored} ${displayOperator(operator)}${waitingForOperand ? '' : ` ${display}`}` : '')}
+          </div>
+          <div className="simple-result">{display}</div>
+        </div>
+        <div className="simple-keypad">
+          {buttons.map((button) => (
+            <button type="button" key={button.label} className={`simple-button ${button.className ?? ''}`} onClick={button.action} aria-label={button.label === '⌫' ? 'Backspace' : button.label}>
+              {button.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PageSeo({
+  title,
+  description,
+  path,
+  faqs,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  faqs?: { question: string; answer: string }[];
+}) {
+  useEffect(() => {
+    document.title = title;
+    const siteUrl = window.location.origin;
+    const canonicalUrl = `${siteUrl}${path}`;
+    const values: Record<string, string> = {
+      description,
+      'og:title': title,
+      'og:description': description,
+      'og:url': canonicalUrl,
+      'twitter:title': title,
+      'twitter:description': description,
+    };
+
+    Object.entries(values).forEach(([key, content]) => {
+      const selector = key.startsWith('og:') || key.startsWith('twitter:')
+        ? `meta[property="${key}"]`
+        : `meta[name="${key}"]`;
+      let element = document.head.querySelector<HTMLMetaElement>(selector);
+      if (!element) {
+        element = document.createElement('meta');
+        if (key.startsWith('og:') || key.startsWith('twitter:')) {
+          element.setAttribute('property', key);
+        } else {
+          element.setAttribute('name', key);
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    });
+
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', canonicalUrl);
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': faqs ? 'FAQPage' : 'WebSite',
+      name: title,
+      description,
+      url: canonicalUrl,
+      ...(faqs
+        ? {
+            mainEntity: faqs.map((faq) => ({
+              '@type': 'Question',
+              name: faq.question,
+              acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+            })),
+          }
+        : {}),
+    };
+    let structuredData = document.head.querySelector<HTMLScriptElement>(
+      'script[data-calc-notebook-schema]',
+    );
+    if (!structuredData) {
+      structuredData = document.createElement('script');
+      structuredData.type = 'application/ld+json';
+      structuredData.dataset.calcNotebookSchema = 'true';
+      document.head.appendChild(structuredData);
+    }
+    structuredData.textContent = JSON.stringify(schema);
+  }, [description, faqs, path, title]);
+
+  return null;
+}
+
+function SeoArticle({ contentKey }: { contentKey: CalculatorId }) {
+  const content = calculatorSeoContent[contentKey];
+  return (
+    <article className="seo-content calculator-seo" aria-labelledby={`${contentKey}-guide-title`}>
+      <div className="seo-content-intro">
+        <span className="home-kicker"><span className="kicker-line" /><span>THE NOTEBOOK GUIDE</span></span>
+        <h2 id={`${contentKey}-guide-title`}>About {content.title.split(' - ')[0]}</h2>
+        <p>{content.intro}</p>
+      </div>
+      <div className="seo-sections">
+        {content.sections.map((section) => (
+          <SeoSectionBlock key={section.heading} section={section} />
+        ))}
+      </div>
+      <section className="faq-section" aria-labelledby={`${contentKey}-faq-title`}>
+        <div className="section-caption">
+          <span id={`${contentKey}-faq-title`}>Frequently asked questions</span>
+          <span className="section-rule" />
+        </div>
+        <div className="faq-grid">
+          {content.faqs.map((faq) => (
+            <details className="faq-item" key={faq.question}>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </article>
+  );
+}
+
+function SeoSectionBlock({ section }: { section: SeoSection }) {
+  return (
+    <section className="seo-section">
+      <h3>{section.heading}</h3>
+      {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      {section.bullets && (
+        <ul>
+          {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function TopBar({ activeId }: { activeId?: CalculatorId }) {
   return (
     <header className="topbar">
       <div className="brand-lockup">
@@ -179,6 +473,18 @@ function TopBar() {
         <span className="status-dot" />
         <span>Ready when you are</span>
       </div>
+      <nav className="topbar-nav" aria-label="Calculator pages">
+        {calculatorMeta.map((calculator) => (
+          <Link
+            href={calculatorPath(calculator.id)}
+            key={calculator.id}
+            className={activeId === calculator.id ? 'nav-link nav-link-active' : 'nav-link'}
+            aria-current={activeId === calculator.id ? 'page' : undefined}
+          >
+            {calculator.name.replace(' Calculator', '')}
+          </Link>
+        ))}
+      </nav>
     </header>
   );
 }
@@ -186,19 +492,16 @@ function TopBar() {
 function CalculatorCard({
   calculator,
   index,
-  onSelect,
 }: {
   calculator: CalculatorMeta;
   index: number;
-  onSelect: (id: CalculatorId) => void;
 }) {
   const Icon = calculator.icon;
   return (
-    <button
-      type="button"
+    <Link
+      href={calculatorPath(calculator.id)}
       className={`calculator-card calculator-card-${calculator.tint} animate-rise`}
       style={{ animationDelay: `${index * 65}ms` }}
-      onClick={() => onSelect(calculator.id)}
       data-testid={`button-open-${calculator.id}`}
       aria-label={`Open ${calculator.name}`}
     >
@@ -210,7 +513,7 @@ function CalculatorCard({
         <span className="card-description">{calculator.description}</span>
       </span>
       <span className="card-arrow" aria-hidden="true"><ArrowRight size={19} /></span>
-    </button>
+    </Link>
   );
 }
 
@@ -227,7 +530,7 @@ function CalculatorLayout({
   return (
     <main className="notebook-page min-h-[100dvh]">
       <div className="mx-auto max-w-6xl px-5 py-5 sm:px-8 sm:py-8">
-        <TopBar />
+        <TopBar activeId={calculator.id} />
         <div className="calculator-view animate-rise">
           <button type="button" className="back-button" onClick={onBack} data-testid="button-back-to-calculators">
             <ArrowLeft size={16} />
@@ -242,6 +545,7 @@ function CalculatorLayout({
             </div>
           </div>
           {children}
+          <SeoArticle contentKey={calculator.id} />
         </div>
         <div className="calculator-footer">
           <span>CALC NOTEBOOK</span>
@@ -634,23 +938,49 @@ function GstCalculator({ onBack }: { onBack: () => void }) {
   );
 }
 
-function NotebookApp() {
-  const [selected, setSelected] = useState<CalculatorId | null>(null);
-  const onBack = () => setSelected(null);
-  if (!selected) return <Home onSelect={setSelected} />;
+function CalculatorPage({ calculatorId }: { calculatorId: CalculatorId }) {
+  const [, setLocation] = useLocation();
+  const content = calculatorSeoContent[calculatorId];
+  const onBack = () => setLocation('/');
   const calculatorProps = { onBack };
-  if (selected === 'emi') return <EmiCalculator {...calculatorProps} />;
-  if (selected === 'age') return <AgeCalculator {...calculatorProps} />;
-  if (selected === 'percentage') return <PercentageCalculator {...calculatorProps} />;
-  if (selected === 'bmi') return <BmiCalculator {...calculatorProps} />;
-  return <GstCalculator {...calculatorProps} />;
+
+  return (
+    <>
+      <PageSeo
+        title={content.title}
+        description={content.metaDescription}
+        path={calculatorPath(calculatorId)}
+        faqs={content.faqs}
+      />
+      {calculatorId === 'emi' && <EmiCalculator {...calculatorProps} />}
+      {calculatorId === 'age' && <AgeCalculator {...calculatorProps} />}
+      {calculatorId === 'percentage' && <PercentageCalculator {...calculatorProps} />}
+      {calculatorId === 'bmi' && <BmiCalculator {...calculatorProps} />}
+      {calculatorId === 'gst' && <GstCalculator {...calculatorProps} />}
+    </>
+  );
 }
 
 function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
-        <Route path="/" component={NotebookApp} />
+        <Route path="/" component={Home} />
+        <Route path="/emi-calculator">
+          <CalculatorPage calculatorId="emi" />
+        </Route>
+        <Route path="/age-calculator">
+          <CalculatorPage calculatorId="age" />
+        </Route>
+        <Route path="/percentage-calculator">
+          <CalculatorPage calculatorId="percentage" />
+        </Route>
+        <Route path="/bmi-calculator">
+          <CalculatorPage calculatorId="bmi" />
+        </Route>
+        <Route path="/gst-calculator">
+          <CalculatorPage calculatorId="gst" />
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>
