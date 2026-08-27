@@ -116,7 +116,7 @@ const todayString = () => {
 function Home() {
   return (
     <main className="notebook-page min-h-[100dvh]">
-      <div className="mx-auto max-w-6xl px-5 py-5 sm:px-8 sm:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <PageSeo
           title="Calc Notebook - Simple EMI, Age, Percentage, BMI & GST Calculators"
           description="Free, clear online calculators for EMI, age, percentage, BMI, and GST. Get practical answers without the spreadsheet feeling."
@@ -529,7 +529,7 @@ function CalculatorLayout({
   const Icon = calculator.icon;
   return (
     <main className="notebook-page min-h-[100dvh]">
-      <div className="mx-auto max-w-6xl px-5 py-5 sm:px-8 sm:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <TopBar activeId={calculator.id} />
         <div className="calculator-view animate-rise">
           <button type="button" className="back-button" onClick={onBack} data-testid="button-back-to-calculators">

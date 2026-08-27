@@ -910,8 +910,8 @@ button {
   display: flex;
   order: 3;
   width: 100%;
-  justify-content: center;
-  gap: .45rem;
+  justify-content: stretch;
+  gap: .2rem;
   padding-top: .85rem;
   overflow-x: auto;
   border-top: 1px solid rgba(201, 192, 178, .6);
@@ -919,14 +919,16 @@ button {
 }
 .topbar-nav::-webkit-scrollbar { display: none; }
 .nav-link {
-  flex: 0 0 auto;
-  padding: .55rem .9rem;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: .62rem .35rem;
   color: var(--ink-soft);
   border-radius: .25rem;
   font-family: var(--font-mono);
-  font-size: .74rem;
+  font-size: clamp(.68rem, 1.1vw, .9rem);
   font-weight: 800;
-  letter-spacing: .08em;
+  letter-spacing: .06em;
+  text-align: center;
   text-decoration: none;
   text-transform: uppercase;
   transition: color .2s ease, background .2s ease;
