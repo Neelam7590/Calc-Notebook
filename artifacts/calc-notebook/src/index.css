@@ -629,7 +629,7 @@ button {
   color: var(--ink);
   text-align: left;
   background: rgba(251, 249, 243, .74);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(201, 192, 178, .58);
   border-radius: .35rem 1rem .45rem .7rem;
   cursor: pointer;
   box-shadow: 0 4px 0 rgba(39, 54, 77, .035);
@@ -640,10 +640,10 @@ button {
   top: 0;
   bottom: 0;
   left: 0;
-  width: .3rem;
+  width: .18rem;
   content: '';
   background: var(--coral);
-  opacity: .85;
+  opacity: .62;
 }
 .calculator-card:hover,
 .calculator-card:focus-visible {
@@ -911,7 +911,7 @@ button {
   order: 3;
   width: 100%;
   justify-content: center;
-  gap: .35rem;
+  gap: .45rem;
   padding-top: .85rem;
   overflow-x: auto;
   border-top: 1px solid rgba(201, 192, 178, .6);
@@ -920,19 +920,19 @@ button {
 .topbar-nav::-webkit-scrollbar { display: none; }
 .nav-link {
   flex: 0 0 auto;
-  padding: .48rem .78rem;
+  padding: .55rem .9rem;
   color: var(--ink-soft);
   border-radius: .25rem;
   font-family: var(--font-mono);
-  font-size: .65rem;
-  font-weight: 700;
-  letter-spacing: .06em;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .08em;
   text-decoration: none;
   text-transform: uppercase;
   transition: color .2s ease, background .2s ease;
 }
 .nav-link:hover, .nav-link:focus-visible { color: var(--ink); background: var(--coral-soft); outline: none; }
-.nav-link-active { color: var(--paper-light); background: var(--ink); box-shadow: 3px 3px 0 var(--coral); }
+.nav-link-active { color: var(--paper-light); background: var(--ink); box-shadow: 2px 2px 0 var(--coral); }
 .nav-link-active:hover, .nav-link-active:focus-visible { color: var(--paper-light); background: var(--ink); }
 
 .simple-calculator {
