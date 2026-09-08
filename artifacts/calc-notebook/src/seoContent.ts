@@ -14,16 +14,16 @@ export type CalculatorSeoContent = {
 
 export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
   emi: {
-    title: 'EMI Calculator - Calculate Loan EMI, Interest & Total Payment',
+    title: 'EMI Calculator Online – Calculate Loan EMI Free | Calc Notebook',
     metaDescription:
-      'Use the Calc Notebook EMI calculator to calculate monthly loan EMI, total interest, and total payment for home, personal, car, or education loans.',
+      'Calculate your loan EMI instantly with our free EMI calculator. Get monthly EMI, total interest, and total payment in seconds.',
     intro:
-      'Planning a loan becomes easier when the monthly commitment is clear. This EMI calculator helps you estimate the equated monthly instalment for a loan using the amount borrowed, annual interest rate, and repayment tenure. Enter your figures to see the monthly EMI, the total interest paid over the full term, and the total amount returned to the lender. The calculation is quick, transparent, and useful while comparing loan offers or checking whether a proposed payment fits your monthly budget.',
+      'Planning a loan becomes easier when the monthly commitment is clear. This EMI calculator helps you estimate the monthly installment, or loan EMI, for any regular borrowing — home loan EMI, personal loan EMI, a car loan, or an education loan. It uses the amount borrowed, the annual interest rate, and the repayment tenure. Enter your figures to see the monthly EMI, the total interest paid over the full term, and the total amount returned to the lender. The calculation is quick, transparent, and useful while comparing loan offers or checking whether a proposed payment fits your monthly budget.',
     sections: [
       {
         heading: 'What is an EMI?',
         paragraphs: [
-          'EMI stands for Equated Monthly Instalment. It is the fixed amount a borrower usually pays every month towards a loan. Each instalment contains two parts: principal repayment and interest. At the beginning of a typical amortising loan, the interest portion is larger because interest is charged on a higher outstanding balance. As the principal reduces, the interest part gradually falls and more of each instalment goes towards the principal. Although the split changes, the scheduled EMI generally stays the same when the interest rate is fixed.',
+          'EMI stands for Equated Monthly Instalment, and the monthly installment a borrower usually pays every month is a loan EMI. Each instalment contains two parts: principal repayment and interest. At the beginning of a typical amortising loan, the interest portion is larger because interest is charged on a higher outstanding balance. As the principal reduces, the interest part gradually falls and more of each instalment goes towards the principal. Although the split changes, the scheduled EMI generally stays the same when the interest rate is fixed.',
           'A monthly EMI is useful because it turns a large borrowing decision into a recurring household expense. Instead of looking only at the loan amount, you can compare a payment with rent, school fees, utilities, savings, and other commitments. The EMI number is an estimate rather than a promise from a lender. Processing fees, insurance, taxes, rate changes, prepayments, and lender-specific rounding can change the final repayment schedule, so always confirm the sanction letter and amortisation schedule before signing.',
         ],
       },
@@ -110,11 +110,11 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
     ],
   },
   age: {
-    title: 'Age Calculator - Calculate Exact Age in Years, Months & Days',
+    title: 'Age Calculator Online – Find Your Exact Age Free | Calc Notebook',
     metaDescription:
-      'Find your exact age in years, months, days, and total days lived with the Calc Notebook age calculator. Fast, clear, and easy to use.',
+      'Find your exact age in years, months, and days with our free age calculator. Simple, fast, and accurate.',
     intro:
-      'Want to know your exact age today rather than a rounded number of years? This age calculator compares your date of birth with today’s date and shows the result in years, months, and days. It also calculates the total number of calendar days lived. The tool is helpful for birthdays, forms, eligibility checks, personal milestones, and any moment when “almost thirty” is not precise enough.',
+      'Want to know your exact age today rather than a rounded number of years? This date of birth calculator compares your date of birth with today’s date and shows your exact age in years, months, and days. It also calculates the total number of calendar days lived. The age calculator is helpful for birthdays, forms, eligibility checks, personal milestones, and any moment when “almost thirty” is not precise enough.',
     sections: [
       {
         heading: 'What does exact age mean?',
@@ -198,11 +198,11 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
     ],
   },
   percentage: {
-    title: 'Percentage Calculator - Find X% of Y or What Percent X Is of Y',
+    title: 'Percentage Calculator Online – Free & Easy | Calc Notebook',
     metaDescription:
-      'Use this percentage calculator for X% of Y and “X is what percent of Y?” questions. Get quick, clear percentage answers for everyday math.',
+      'Calculate percentages easily — find X% of Y or what percent X is of Y. Free and instant percentage calculator.',
     intro:
-      'Percentages show parts, comparisons, discounts, changes, and proportions in a form that is easy to understand. This percentage calculator handles two of the most useful everyday questions: “What is X% of Y?” and “X is what percent of Y?” Enter the numbers, choose the question you want to answer, and get a clear result without doing the conversion in your head.',
+      'Percentages show parts, comparisons, discounts, changes, and proportions in a form that is easy to understand. This percent calculator handles two of the most useful everyday questions: “What is X% of Y?” and “X is what percent of Y?” Enter the numbers, choose the question you want to answer, and get a clear result without doing the conversion in your head. If you need the percentage of a number, the first mode gives it to you in one step — for example, 15% of 760 is 114.',
     sections: [
       {
         heading: 'What is a percentage?',
@@ -214,7 +214,7 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
       {
         heading: 'How to calculate X% of Y',
         paragraphs: [
-          'Choose the “X% of Y” mode when you know the percentage and the whole number. Enter the percentage as X and the whole as Y. The calculation is X divided by 100, multiplied by Y. For example, 15% of 240 is 0.15 multiplied by 240, which equals 36. This is the mode to use for a discount amount, a tip, a portion of a budget, a target percentage of marks, or a tax amount when the rate and base are known.',
+          'Choose the “X% of Y” mode when you need a percentage of a number and you already know the percentage and the whole number. Enter the percentage as X and the whole as Y. The calculation is X divided by 100, multiplied by Y. For example, 15% of 240 is 0.15 multiplied by 240, which equals 36. This is the mode to use for a discount amount, a tip, a portion of a budget, a target percentage of marks, or a tax amount when the rate and base are known.',
           'The result is the part, not automatically the final total after adding or subtracting it. If a shirt costs 2,000 and the discount is 15%, the calculator gives the discount amount of 300. The sale price is found by subtracting 300 from 2,000. If a service fee is 15%, you would add the result to the base amount. Keeping the percentage amount separate makes the next money decision more visible.',
           'The percentage can be less than one, greater than one hundred, or zero, depending on the question. A rate such as 0.5% is valid and means half of one percent. A result greater than the original number can also be valid when X is above 100%. The tool accepts zero or positive values and explains when the whole number is missing or not greater than zero.',
         ],
@@ -287,11 +287,11 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
     ],
   },
   bmi: {
-    title: 'BMI Calculator - Check Body Mass Index & Healthy Weight Category',
+    title: 'BMI Calculator Online – Check Your Body Mass Index | Calc Notebook',
     metaDescription:
-      'Calculate BMI from height in centimetres and weight in kilograms. See your BMI value and the Underweight, Normal, Overweight, or Obese category.',
+      'Check your Body Mass Index (BMI) for free. Enter your height and weight to see your BMI category instantly.',
     intro:
-      'This BMI calculator gives a quick body mass index estimate from height in centimetres and weight in kilograms. Enter both values to see your BMI and the standard adult category associated with that range: Underweight, Normal, Overweight, or Obese. BMI is a screening measure that can help start a health conversation; it is not a diagnosis and should be interpreted with context.',
+      'This body mass index calculator gives a quick BMI estimate from height in centimetres and weight in kilograms. Enter both values to see your BMI and the standard adult category associated with that range: Underweight, Normal, Overweight, or Obese. Because it sorts results into weight ranges, many people use it as a healthy weight calculator for a first screening. BMI is a screening measure that can help start a health conversation; it is not a diagnosis and should be interpreted with context.',
     sections: [
       {
         heading: 'What is BMI?',
@@ -383,11 +383,11 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
     ],
   },
   gst: {
-    title: 'GST Calculator - Add or Remove GST at 5%, 12%, 18% & 28%',
+    title: 'GST Calculator India – Add or Remove GST Online | Calc Notebook',
     metaDescription:
-      'Calculate GST amount and final price with 5%, 12%, 18%, or 28% rates. Add GST to a base amount or remove GST from an inclusive price.',
+      'Calculate GST online — add or remove GST from any amount at 5%, 12%, 18%, or 28% rates. Free GST calculator for India.',
     intro:
-      'GST can be simple when the base price and rate are clear, but it is easy to make mistakes when a price already includes tax. This GST calculator supports both directions: add GST to an amount before tax, or remove GST from an amount that already includes GST. Choose a rate of 5%, 12%, 18%, or 28% and see the GST amount, original amount, and final amount in one place.',
+      'GST can be simple when the base price and rate are clear, but it is easy to make mistakes when a price already includes tax. This free GST calculator for India supports both directions: add GST to an amount before tax, or remove GST from an amount that already includes GST. Choose a rate of 5%, 12%, 18%, or 28% and see the GST amount, original amount, and final amount in one place.',
     sections: [
       {
         heading: 'What is GST?',
@@ -479,6 +479,117 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
       },
     ],
   },
+  cgpa: {
+    title: 'CGPA Calculator Online – Calculate Your CGPA Free | Calc Notebook',
+    metaDescription:
+      'Calculate your CGPA on a 10-point scale using subject grade points and credits. The Calc Notebook CGPA calculator is clear, flexible, and easy to use.',
+    intro:
+      'A CGPA is more useful when every subject is counted with the right academic weight. This CGPA calculator combines your subject grade points and credit values using the standard credit-weighted average: multiply each grade point by its credits, add those weighted points, and divide by total credits. Add as many subjects as you need, leave unused rows empty, and see the CGPA along with the subjects and credits included in the result.',
+    sections: [
+      {
+        heading: 'What is CGPA?',
+        paragraphs: [
+          'CGPA means Cumulative Grade Point Average. It is a summary of academic performance expressed as a grade-point average rather than as marks out of 100. A CGPA can describe one semester, a year, a term, or a complete programme depending on the subjects and results included. Many institutions use a 10-point scale, although some universities use a 4-point scale or another local system. This calculator is designed for grade points on a 0-to-10 scale, so confirm the scale on your marksheet before entering values.',
+          'The word cumulative does not always mean that every subject has identical importance. In a credit-based programme, a three-credit course should generally contribute less than a six-credit course because the larger course represents more academic workload. That is why the calculator asks for credits as well as grade points. If all subjects have exactly the same credits, the weighted result becomes the ordinary average of the grade points. When credits differ, the weighted calculation gives the larger courses their proper influence.',
+        ],
+      },
+      {
+        heading: 'How to use this CGPA calculator',
+        paragraphs: [
+          'Enter one row for each subject you want to include. You can type a short subject name for your own reference, but the name is optional. Enter the grade point awarded for the subject in the Grade point field, and enter the subject credit value in Credits. For example, a subject with grade point 8.5 and four credits contributes 34 weighted points. Add the remaining subjects in the same way and choose Calculate my CGPA when the rows are ready.',
+          'The first five rows are ready when the page opens, and you can add another subject whenever your semester has more courses. Blank rows are ignored, so you do not need to fill every visible row. A row that has only a grade point or only credits is treated as incomplete and will be highlighted. The calculator also prevents grade points below 0 or above 10 and requires every used credit value to be greater than zero.',
+          'After calculation, the result shows the CGPA rounded to two decimal places, the number of subjects counted, and the total credits used. The underlying calculation keeps the full decimal precision before the displayed answer is rounded. This avoids changing the weighted average too early. If your institution rounds only at the end of a semester or follows a particular transcript rule, use the displayed result as a clear estimate and compare it with the official academic record.',
+        ],
+      },
+      {
+        heading: 'The CGPA formula explained',
+        paragraphs: [
+          'The standard credit-weighted formula is CGPA = Σ(grade point × credit) ÷ Σcredits. The Greek letter sigma means “add all of the values.” For every subject, multiply its grade point by its credit value. Then add those products together. Separately add all credit values. Finally divide the total weighted points by the total credits. The result remains on the same grade-point scale as the inputs, so grade points out of 10 produce a CGPA out of 10.',
+          'Imagine three subjects with grade points 8, 7, and 9 and credits 4, 3, and 2. The weighted points are 32, 21, and 18, for a total of 71. The total credits are 9, so the CGPA is 71 ÷ 9, or 7.89 when rounded to two decimals. A simple average would be 8.00, which is slightly different because it treats the three subjects as equally large. The credit-weighted result reflects the course structure.',
+          'The order of the subjects does not change the result. You can enter them in marksheet order, alphabetically, or in any order that is easiest to check. What matters is that each grade point stays paired with the correct credit value. If a subject has a zero grade point and positive credits, it is a valid input and contributes zero weighted points. If it has no credits, it cannot be included in a weighted average and the calculator asks you to correct the row.',
+        ],
+      },
+      {
+        heading: 'Why credits matter in a CGPA',
+        paragraphs: [
+          'Credits represent the relative weight of a course in many academic systems. A lab, project, lecture course, elective, and seminar may not all carry the same number of credits. Giving every subject equal weight can make the final average look different from the institution’s official CGPA. The calculator therefore does not assume that every row has four credits or that every course contributes equally. Enter the credit value printed in your syllabus, grade report, or student information system.',
+          'Credits also help you plan future results. If you know your current total credits and CGPA, you can use the same weighted-average idea to estimate how a future semester may affect the cumulative number. That estimate requires your current weighted points, not just the displayed rounded CGPA. When accuracy matters, use the unrounded official values or ask your institution for the exact record. A two-decimal CGPA can be useful for planning, but rounding too early can create a small difference over many semesters.',
+          'Some programmes include courses that do not affect the GPA, such as pass/fail modules, audit courses, internships, or non-credit activities. Do not enter those as normal grade-point rows unless your institution includes them in the CGPA calculation. The correct inclusion rule belongs to the academic policy. This calculator performs the arithmetic on the rows you provide; it cannot identify whether a particular course is counted, excluded, repeated, or replaced under your university’s rules.',
+        ],
+      },
+      {
+        heading: 'CGPA, GPA, SGPA, and percentage',
+        paragraphs: [
+          'GPA usually refers to a grade-point average for a defined set of courses, while SGPA commonly refers to a semester grade point average. CGPA normally combines results across multiple semesters or a larger academic period. Terminology differs between institutions, so read the label on your official report. The arithmetic may be similar, but the courses, credits, scale, and repeat rules included in each number can be different. This page can calculate a weighted average for the rows you enter, regardless of which label your college uses.',
+          'There is no universal formula for converting CGPA to percentage. Some institutions use a published multiplier, some use a formula tied to a specific grading scheme, and some do not provide a direct conversion at all. A commonly quoted formula may be correct for one board or university and wrong for another. Use the conversion rule printed by your institution when an application asks for a percentage. Do not automatically multiply a 10-point CGPA by 10 unless your official policy explicitly says to do so.',
+          'Likewise, a 10-point CGPA cannot be compared directly with a 4-point GPA without a recognised conversion method. Grade boundaries, course difficulty, credit policies, and institutional scales vary. If you are applying for a job, scholarship, exchange programme, or graduate course, submit the official transcript and conversion note when requested. The calculator is excellent for understanding the weighted number, but official academic documents should decide how it is reported.',
+        ],
+      },
+      {
+        heading: 'Checking your inputs before calculating',
+        paragraphs: [
+          'Start by checking the grading scale. This calculator accepts grade points from 0 through 10, including decimal values such as 7.5 or 8.25. If your result is a letter grade, convert it to the numeric grade point using your institution’s own table before entering it. Do not treat a raw mark such as 86 as a grade point of 86; raw marks and grade points are different measures. If your university gives a four-point grade, use a four-point tool or an approved conversion first.',
+          'Next confirm credits and course status. Look for the credit column on the official grade report, and check whether an audit, failed, repeated, withdrawn, or transfer course is included. If a course has been repeated, the institution may replace the old grade, average attempts, or count both attempts. The calculator can model whichever rows you choose, but you should choose them according to the academic regulation rather than simply entering every line on a transcript.',
+          'Finally, keep a note of the source for each number. A quick screenshot or saved result can be helpful for your own planning, but personal academic records should not be shared unnecessarily. If the official CGPA differs by a small amount, first check whether the institution used more decimal places, excluded a course, applied a repeat policy, or rounded only after combining semesters. Those explanations are common and do not necessarily mean the arithmetic is wrong.',
+        ],
+      },
+      {
+        heading: 'Using CGPA for academic planning',
+        paragraphs: [
+          'A CGPA can help you set a target for the next semester. You can compare your current number with a scholarship threshold, eligibility requirement, or personal goal. Treat the threshold as a planning reference, not as a statement about your ability. A target is most useful when paired with specific actions: reviewing difficult topics early, attending support sessions, creating a realistic study schedule, and checking assessment weightings before exams. The calculator shows the number that a plan is trying to influence.',
+          'If you want to understand how much one subject can change the average, enter your known results and then add a separate row for a possible grade point and credit value. Compare scenarios with the same total credits and change one assumption at a time. This keeps the result understandable. Remember that a high-credit subject usually changes the average more than a low-credit subject, while a subject with a grade point close to your current average has a smaller effect.',
+          'Academic outcomes are more than one number. A transcript may show individual grades, projects, internships, publications, skills, attendance, and improvement over time. A CGPA can be useful for an application or eligibility check, but it should not become the only measure of progress. Use it alongside feedback from instructors, your own learning goals, and the requirements of the programme or opportunity you are considering.',
+        ],
+      },
+      {
+        heading: 'Common CGPA calculation mistakes',
+        bullets: [
+          'Taking a simple average of subject grade points when the subjects have different credit values.',
+          'Entering raw marks, such as 82, in a field that expects a grade point on a 0-to-10 scale.',
+          'Pairing a grade point with the wrong subject’s credits after copying values from a marksheet.',
+          'Including audit, pass/fail, withdrawn, or non-credit courses when the institution excludes them.',
+          'Using a percentage conversion formula from another university without checking the official policy.',
+          'Rounding every semester before combining the values instead of using the most precise official data available.',
+          'Assuming repeated courses are handled the same way by every college or examination board.',
+        ],
+      },
+      {
+        heading: 'Frequently asked questions about CGPA',
+        paragraphs: [
+          'This calculator is intentionally transparent: every counted subject contributes a grade point multiplied by its credits, and the sum is divided by total credits. That makes it easy to compare the result with your own spreadsheet or academic record. If the numbers do not match, inspect the subject list and inclusion rules before changing the formula. Different institutions can use the same words while applying different policies to repeats, exclusions, and rounding.',
+          'For a semester result, enter only the subjects that belong to that semester. For a cumulative result, enter all counted subjects across the relevant semesters, or use the institution’s semester-level weighted totals if those are provided. Do not average semester CGPAs directly unless every semester has the same total credits. A semester with 20 credits should have more influence than one with 12 credits when calculating a combined academic average.',
+          'The result is rounded for readability, while the calculation uses the entered decimal values. If you need a document for an employer or university, use your official transcript. The calculator is a planning and checking tool that helps you understand how grade points and credits work together.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the formula for calculating CGPA?',
+        answer:
+          'CGPA is calculated as the sum of each grade point multiplied by its credits, divided by the sum of all credits: Σ(grade point × credits) ÷ Σcredits.',
+      },
+      {
+        question: 'Does this calculator support different subject credits?',
+        answer:
+          'Yes. Enter the grade point and credit value for every subject. Subjects with more credits have a proportionally larger effect on the weighted CGPA.',
+      },
+      {
+        question: 'Can I convert my CGPA to percentage here?',
+        answer:
+          'The calculator reports CGPA on a 10-point scale. Percentage conversion rules vary by institution, so use the official conversion formula from your university or board.',
+      },
+      {
+        question: 'What if all my subjects have the same credits?',
+        answer:
+          'When every subject has the same credit value, the credit-weighted CGPA is the same as the simple average of the subject grade points.',
+      },
+      {
+        question: 'Why does my calculated CGPA differ from my transcript?',
+        answer:
+          'Your institution may exclude certain courses, apply repeat-grade rules, use more precise values, or round at a different stage. Check the official academic policy and transcript.',
+      },
+    ],
+  },
 };
 
 export const homeSeoSections: SeoSection[] = [
@@ -492,31 +603,37 @@ export const homeSeoSections: SeoSection[] = [
   {
     heading: 'EMI calculator for loan planning',
     paragraphs: [
-      'The EMI calculator helps you understand the cost of borrowing before you accept a loan. Enter the loan amount, annual interest rate, and tenure in months to see your monthly EMI, total interest, and total payment. Those three numbers tell a fuller story than a low monthly payment alone. Try a shorter tenure, a different rate, or a larger down payment to see how the total cost changes.',
+      'The EMI calculator helps you understand the cost of borrowing before you accept a loan. Enter the loan amount, annual interest rate, and tenure in months to see your loan EMI, total interest, and total payment. Those three numbers tell a fuller story than a low monthly payment alone. Try a shorter tenure, a different rate, or a larger down payment to see how the total cost changes.',
     ],
   },
   {
     heading: 'Age calculator for exact dates',
     paragraphs: [
-      'The age calculator turns a date of birth into an exact calendar age in years, months, and days. It also counts total days lived, including the effect of leap years and different month lengths. It is handy for birthdays, forms, milestone planning, and any situation where a rounded age is not precise enough. For official eligibility, always compare the answer with the organisation’s required cutoff date and documents.',
+      'This date of birth calculator turns a date of birth into an exact calendar age in years, months, and days. It also counts total days lived, including the effect of leap years and different month lengths. It is handy for birthdays, forms, milestone planning, and any situation where a rounded age is not precise enough. For official eligibility, always compare the answer with the organisation’s required cutoff date and documents.',
     ],
   },
   {
     heading: 'Percentage calculator for quick comparisons',
     paragraphs: [
-      'The percentage calculator answers two common questions: what is X% of Y, and X is what percentage of Y? Use it for marks, discounts, tips, budgets, business metrics, and everyday comparisons. The two modes make the direction of the question explicit, which helps avoid the common mistake of putting the part and the whole in reverse order.',
+      'This percent calculator answers two common questions: what is X% of Y, and X is what percent of Y? Whether you need a percentage of a number or the percent behind a score, both take two quick inputs. Use it for marks, discounts, tips, budgets, business metrics, and everyday comparisons. The two modes make the direction of the question explicit, which helps avoid the common mistake of putting the part and the whole in reverse order.',
     ],
   },
   {
     heading: 'BMI calculator for a quick screening estimate',
     paragraphs: [
-      'The BMI calculator uses height in centimetres and weight in kilograms to estimate body mass index. It displays a value and a standard adult category. BMI is only a screening measure and cannot describe body composition, fitness, medical history, or individual health on its own. Use it as a prompt for a supportive conversation, not as a diagnosis or a reason to make extreme changes.',
+      'The BMI calculator uses height in centimetres and weight in kilograms to estimate body mass index. It displays a value and a standard adult category, which is why many visitors treat it as a healthy weight calculator. BMI is only a screening measure and cannot describe body composition, fitness, medical history, or individual health on its own. Use it as a prompt for a supportive conversation, not as a diagnosis or a reason to make extreme changes.',
     ],
   },
   {
     heading: 'GST calculator for inclusive and exclusive prices',
     paragraphs: [
-      'The GST calculator makes it easier to move between a base amount and a tax-inclusive amount. Select 5%, 12%, 18%, or 28%, then choose Add GST or Remove GST. The result shows the GST amount and the relevant original or final value. Always confirm the correct rate and tax treatment from the invoice or current rules before using a result for formal accounting or compliance.',
+      'The GST calculator for India makes it easier to move between a base amount and a tax-inclusive amount. Select 5%, 12%, 18%, or 28%, then choose Add GST or Remove GST. The result shows the GST amount and the relevant original or final value. Always confirm the correct rate and tax treatment from the invoice or current rules before using a result for formal accounting or compliance.',
+    ],
+  },
+  {
+    heading: 'CGPA calculator for credit-weighted marks',
+    paragraphs: [
+      'The CGPA calculator helps students combine subject grade points into one credit-weighted academic average. Enter the grade point and credit value for each subject, then calculate to see the CGPA on a 10-point scale. Subjects with more credits have a proportionally larger effect because they represent more coursework. The page is useful for semester checks, academic planning, and understanding how one subject may change an overall average.',
     ],
   },
 ];
