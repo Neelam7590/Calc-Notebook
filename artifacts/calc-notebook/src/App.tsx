@@ -21,6 +21,9 @@ import { Link, Route, Switch, useLocation, Router as WouterRouter } from 'wouter
 import NotFound from '@/pages/not-found';
 import BlogList from '@/pages/blog/BlogList';
 import BlogPost from '@/pages/blog/BlogPost';
+import AdminLogin from '@/pages/admin/admin-login';
+import AdminDashboard from '@/pages/admin/admin-dashboard';
+import { AdminAuthProvider } from '@/pages/admin/admin-auth';
 import Terms from '@/pages/legal/Terms';
 import Privacy from '@/pages/legal/Privacy';
 import Disclaimer from '@/pages/legal/Disclaimer';
@@ -1172,6 +1175,16 @@ function Router() {
         <Route path="/privacy" component={Privacy} />
         <Route path="/disclaimer" component={Disclaimer} />
         <Route path="/faq" component={FAQ} />
+        <Route path="/manage-portal-x7k9">
+          <AdminAuthProvider>
+            <AdminLogin />
+          </AdminAuthProvider>
+        </Route>
+        <Route path="/manage-portal-x7k9/dashboard">
+          <AdminAuthProvider>
+            <AdminDashboard />
+          </AdminAuthProvider>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </RoutedErrorBoundary>

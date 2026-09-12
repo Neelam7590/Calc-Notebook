@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { PenLine } from 'lucide-react';
 import { TopBar } from '@/components/top-bar';
 import { SiteFooter } from '@/components/site-footer';
-import { blogPosts, blogCategories, type BlogCategory } from '@/data/blogData';
+import { useBlogPosts, blogCategories, type BlogCategory } from '@/data/blogData';
 
 function PageSeo({ title, description }: { title: string; description: string; path: string }) {
   useEffect(() => {
@@ -16,6 +16,7 @@ function PageSeo({ title, description }: { title: string; description: string; p
 
 export default function BlogList() {
   const [activeCategory, setActiveCategory] = useState<BlogCategory | 'All'>('All');
+  const blogPosts = useBlogPosts();
 
   const filtered = activeCategory === 'All'
     ? blogPosts

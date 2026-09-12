@@ -3,13 +3,13 @@ import { Link, useRoute, useLocation } from 'wouter';
 import { ArrowLeft, ArrowRight, PenLine } from 'lucide-react';
 import { TopBar } from '@/components/top-bar';
 import { SiteFooter } from '@/components/site-footer';
-import { blogPosts } from '@/data/blogData';
+import { useBlogPosts } from '@/data/blogData';
 
 export default function BlogPost() {
   const [, params] = useRoute('/blog/:slug');
   const [, setLocation] = useLocation();
   const slug = params?.slug ?? '';
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = useBlogPosts().find((p) => p.slug === slug);
 
   useEffect(() => {
     document.title = post
