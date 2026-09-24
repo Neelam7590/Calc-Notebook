@@ -590,9 +590,116 @@ export const calculatorSeoContent: Record<string, CalculatorSeoContent> = {
       },
     ],
   },
+  'stamp-duty': {
+    title: 'Stamp Duty Calculator Haryana – Property Registration Cost | Calc Notebook',
+    metaDescription:
+      'Calculate Haryana stamp duty and registration charges for property in Sonipat, Panipat, Gurugram and more. Free, instant, and easy to use.',
+    intro:
+      'Buying property in Haryana means paying stamp duty and registration on the transaction. This Haryana stamp duty calculator estimates those charges using the applicable rates and your city’s reference circle rate. Enter the property value, choose a Haryana city, select the area type as urban or rural, and pick the buyer category to see the stamp duty amount, the registration fee, and the total cost. The result is meant for budgeting and quick planning before you finalise a deal.',
+    sections: [
+      {
+        heading: 'What is stamp duty on property in Haryana?',
+        paragraphs: [
+          'Stamp duty is a legal tax paid on documents that transfer property. In Haryana, the stamp duty rate varies by the category of the buyer and the area where the property is located. Inside municipal limits, the commonly applied rates are 7% for a male buyer, 5% for a female buyer, 6% for joint ownership of a man and a woman, 7% for joint ownership with two male buyers, and 5% for joint ownership with two female buyers. Outside municipal limits, the rates are 5% for a male buyer, 3% for a female buyer, and 4% for joint ownership of a man and a woman. Because rates change through state budgets and local notifications, always confirm the current slab from the Haryana Stamp and Registration Department before relying on any estimate.',
+          'The duty is normally calculated on the higher of two values: the consideration mentioned in the sale deed or the circle rate fixed by the government for that area. Circle rates, also known as collector rates, differ by city and often by colony within a city. That is why the same property value can produce very different charges in Gurugram and Panipat. This calculator uses the higher of the entered value and the reference circle rate when a plot area is provided. In addition to stamp duty, a slab-based registration fee applies, starting from ₹100 and rising up to a maximum cap of ₹50,000.',
+        ],
+      },
+      {
+        heading: 'What are circle rates and why do they matter?',
+        paragraphs: [
+          'Circle rates are minimum property values notified by the state for registration purposes. They act as a floor so that very low sale prices cannot artificially reduce stamp duty. Each Haryana city publishes rates for residential, commercial, and agricultural land, usually expressed per square yard. Sonipat, Panipat, Rohtak, Karnal, Hisar, Ambala, Gurugram, and Faridabad all publish their own rates, and larger cities often have multiple circles inside them.',
+          'When the sale consideration is below the circle rate, the legal minimum value becomes the circle rate for the district, and stamp duty is payable on that higher figure. When the sale price is above the circle rate, the consideration applies. This calculator takes the higher of the two when you enter a plot area. If you only enter the property value, it estimates the duty on the value you provide and reminds you to check the applicable circle rate.',
+        ],
+      },
+      {
+        heading: 'How to use this stamp duty calculator',
+        paragraphs: [
+          'Start with the property value you expect to pay or the value mentioned in the agreement. Choose the Haryana city where the property is located from the dropdown, then select the area type: Urban for property within the municipal committee or corporation limits, and Rural for property outside those limits. Select the buyer category from the available options — male, female, or joint ownership — because Haryana applies different rates for each. The correct combination of area type and buyer category changes the result.',
+          'If you know the plot area in square yards, enter it as well. The calculator compares the agreement value with your city’s typical circle rate multiplied by the area and uses the higher figure as the taxable base. For flats and apartments, where registration is often linked to a different valuation, the plot-area estimate is approximate. The result panel then shows the stamp duty amount, the slab-based registration fee, and the total amount to budget for.',
+          'Use the entered city only as a reference for the circle-rate band and duty context. Rural and urban areas within the same district can follow different slabs, and specific colonies may carry different notified rates. For an exact figure, verify the circle rate for the exact locality and judicial area on the official Haryana revenue portal or with a local sub-registrar before signing.',
+        ],
+      },
+      {
+        heading: 'Stamp duty rates and buyer types',
+        paragraphs: [
+          'Haryana applies different stamp duty rates depending on whether the property sits inside or outside municipal limits. Within municipal limits, a male buyer pays 7%, a female buyer pays 5%, joint ownership with one male and one female buyer pays 6%, joint ownership with two male buyers pays 7%, and joint ownership with two female buyers pays 5%. Outside municipal limits, the rates are lower: 5% for a male buyer, 3% for a female buyer, and 4% for a joint purchase by a man and a woman.',
+          'Beyond stamp duty, Haryana charges a slab-based registration fee that starts at ₹100 for lower-value properties and rises with the property value up to a maximum cap of ₹50,000. The fee is charged in addition to the stamp duty, so it must be included when budgeting for the total registration cost. Both the duty rates and the fee slabs are editable constants in the tool so future budget changes can be reflected quickly.',
+          'The buyer category and the ownership structure both matter. Transactions where a company or business entity is the buyer, or cases involving HUF, specific schemes, or multiple buyers in other combinations, can follow rules outside this table. The calculator models the individual and joint options listed above. If your case involves a business entity or a special scheme, compare the estimate with the sub-registrar’s figure before relying on it.',
+          'Stamp duty is separate from taxes such as GST on services, property tax levied later by a municipality, or the charges paid to a builder or society. Use this tool for the dutiable document cost only, and remember that penalties, delayed payment interest, and additional charges can apply when duty is not paid on time.',
+        ],
+      },
+      {
+        heading: 'Example property purchase calculations',
+        paragraphs: [
+          'Consider a property inside municipal limits in Sonipat with an agreement value of 30 lakh rupees. With a joint purchase by one male and one female buyer at the urban rate of 6%, stamp duty comes to 1.8 lakh. The registration fee for a value above 20 lakh is 20 thousand, giving a total of 2 lakh. If the same property is bought by a single male buyer, the duty rises to 2.1 lakh at 7%, and a single female buyer pays 1.5 lakh at 5%.',
+          'Outside municipal limits the picture changes. For a rural property of the same value in Sonipat, a joint male and female purchase at 4% gives a duty of 1.2 lakh, a female buyer at 3% pays 90 thousand, and a male buyer at 5% pays 1.5 lakh. The rural concessions make a visible difference for buyers registering agricultural or village properties.',
+          'Now suppose a plot of 200 square yards in Panipat where the typical circle rate is 21,000 rupees per square yard. The circle-rate value is 42 lakh. If the agreement value is only 35 lakh, the taxable base becomes 42 lakh because the duty is charged on the higher figure. The difference matters, which is why entering the plot area along with the city gives a more realistic estimate than a bare agreement value.',
+          'These examples use the constants in the tool and are meant to show how the calculation works. Actual numbers vary with the notified circle rate for the exact colony and the duty slab current on the date of registration. Use the calculator as a rapid estimate, then confirm with an official source.',
+        ],
+      },
+      {
+        heading: 'Common stamp duty calculation mistakes',
+        bullets: [
+          'Calculating duty on the agreement value when the circle rate for the area is higher.',
+          'Forgetting the separate registration fee and quoting only the stamp duty.',
+          'Using a male rate when a concession for a woman buyer applies, or vice versa.',
+          'Choosing a city without the rural or urban context, since slabs can differ inside a district.',
+          'Applying an outdated rate after a state budget or Haryana notification changes the slab.',
+          'Assuming the total on an estimate equals the final charge payable at the sub-registrar office.',
+        ],
+      },
+      {
+        heading: 'Frequently asked questions about Haryana stamp duty',
+        paragraphs: [
+          'The stamp duty payable is based on the higher of the agreement value and the applicable circle rate, using the rate slab for your buyer category and area type. Registration is charged in addition to the duty through a slab-based fee that starts at ₹100 and caps at ₹50,000 for higher-value properties. The calculator applies these constants and shows the breakdown so you can inspect every number.',
+          'Yes, women buyers and joint purchasers that include a woman often pay a lower stamp duty rate in Haryana. The tool includes male, female, and joint buyer options so you can compare costs before deciding how the property deed should be structured. Confirm the current concession requirements, including joint-ownership conditions, with the registration office.',
+          'If the agreement value is below the circle rate for the area, the circle rate becomes the taxable base and the duty is calculated on that higher value. Entering the plot area helps the calculator apply this correctly for a residential plot. For flats and commercial property, confirm the applicable valuation with the sub-registrar.',
+          'The result is an estimate for budgeting. Stamp duty and registration rates in Haryana change through budgets and official notifications, and the exact circle rate depends on the specific locality and colony. Always verify the current rates on the official Haryana revenue department documents before the registration date.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the stamp duty rate in Haryana?',
+        answer:
+          'Inside municipal limits the urban rate is 7% for a male buyer, 5% for a female buyer, 6% for a joint male and female purchase, 7% for two male buyers, and 5% for two female buyers. Outside municipal limits the rural rate is 5% for a male buyer, 3% for a female buyer, and 4% for a joint male and female purchase. Registration fee is charged separately through a slab-based structure. Verify the current slab on the official portal.',
+      },
+      {
+        question: 'Is stamp duty calculated on agreement value or circle rate?',
+        answer:
+          'It is calculated on the higher of the agreement value and the applicable circle rate for the area. When the agreement value is below the circle rate, stamp duty is payable on the circle-rate value.',
+      },
+      {
+        question: 'Does the buyer category affect stamp duty in Haryana?',
+        answer:
+          'Yes. Male, female, and joint buyer categories each carry different rates, and women buyers or joint buyers that include a woman generally pay less. Select the correct category in the calculator to see the right estimate.',
+      },
+      {
+        question: 'How is the registration fee in Haryana calculated?',
+        answer:
+          'Registration is charged through a slab-based fee that starts at ₹100 for lower-value properties and rises with the transaction value, up to a maximum cap of ₹50,000 for properties valued above ₹90,000.',
+      },
+      {
+        question: 'Which Haryana cities are covered by this calculator?',
+        answer:
+          'The tool includes Sonipat, Panipat, Rohtak, Karnal, Hisar, Ambala, Gurugram, and Faridabad. Each city shows a reference circle-rate band for comparison with your entered value.',
+      },
+      {
+        question: 'Is this stamp duty calculator the final registration charge?',
+        answer:
+          'No. It is an estimate based on the entered value, buyer category, area type, and reference circle rate. Exact charges depend on the notified circle rate for the locality, the current duty and fee slabs, and any special schemes or penalties.',
+      },
+    ],
+  },
 };
 
 export const homeSeoSections: SeoSection[] = [
+  {
+    heading: 'Stamp duty calculator for Haryana property buyers',
+    paragraphs: [
+      'The Haryana stamp duty calculator estimates the charges you pay when registering a property in the state. Enter the property value, choose a city such as Sonipat, Panipat, or Gurugram, select the area type as urban or rural, and pick the buyer category. The result shows stamp duty, the slab-based registration fee, and the total amount to budget, including the effect of circle rates where the agreement value is too low.',
+    ],
+  },
   {
     heading: 'Everyday calculators in one calm place',
     paragraphs: [

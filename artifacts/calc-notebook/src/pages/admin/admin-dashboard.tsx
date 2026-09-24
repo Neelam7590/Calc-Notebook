@@ -1,331 +1,95 @@
-import { useState, type FormEvent, type ReactNode } from 'react';
-import { Redirect } from 'wouter';
-import {
-  Loader2,
-  LogOut,
-  NotebookPen,
-  Pencil,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from 'lucide-react';
-import { useAdminAuth } from '@/pages/admin/admin-auth';
-import {
-  blogCategories,
-  createBlogPost,
-  deleteBlogPost,
-  updateBlogPost,
-  useBlogPosts,
-  type BlogCategory,
-  type BlogPost,
-  type BlogPostDraft,
-} from '@/data/blogData';
-import { LOGIN_PATH } from '@/pages/admin/admin-login';
+import { useLocation } from 'wouter';
+import { ArrowRight, FilePlus2, FolderOpen, FolderTree, NotebookPen } from 'lucide-react';
+import { useBlogPosts, type BlogPost } from '@/data/blogData';
+import { adminPath } from '@/pages/admin/admin-layout';
 
-type EditorState =
-  | { kind: 'closed' }
-  | { kind: 'create' }
-  | { kind: 'edit'; post: BlogPost };
+/*
+ * Dashboard home: quick-action cards (All blogs, Add new blog, Categories),
+ * a small stats row, and the most recently updated posts (latest on top).
+ * The whole page is rendered inside the shared admin layout (sidebar + topbar).
+ */
 
-function AdminDashboard() {
-  const { session, loading, signOut } = useAdminAuth();
-
-  if (loading) {
-    return <AdminShell><LoadingPanel /></AdminShell>;
-  }
-
-  if (!session) {
-    return <Redirect to={LOGIN_PATH} />;
-  }
-
-  return <DashboardBody onSignOut={signOut} />;
+function sortByRecent(a: BlogPost, b: BlogPost): number {
+  const aTime = new Date(a.updatedAt ?? `${a.date}T00:00:00`).getTime();
+  const bTime = new Date(b.updatedAt ?? `${b.date}T00:00:00`).getTime();
+  if (aTime !== bTime) return bTime - aTime;
+  return b.date.localeCompare(a.date);
 }
 
-function DashboardBody({ onSignOut }: { onSignOut: () => Promise<void> }) {
+export default function DashboardView() {
   const posts = useBlogPosts();
-  const [editor, setEditor] = useState<EditorState>({ kind: 'closed' });
+  const [, setLocation] = useLocation();
 
-  const handleSave = (draft: BlogPostDraft) => {
-    if (editor.kind === 'edit') {
-      updateBlogPost(editor.post.slug, draft);
-    } else {
-      createBlogPost(draft);
-    }
-    setEditor({ kind: 'closed' });
-  };
+  const published = posts.filter((post) => post.status === 'published').length;
+  const drafts = posts.filter((post) => post.status === 'draft').length;
+  const recent = [...posts].sort(sortByRecent).slice(0, 5);
 
-  return (
-    <AdminShell>
-      <div className="admin-panel">
-        <div className="admin-toolbar">
-          <div className="admin-toolbar-title">
-            <span className="home-kicker"><span className="kicker-line" /><span>THE NOTEBOOK BLOG</span></span>
-            <h1 className="calculator-title admin-title">Manage posts</h1>
-          </div>
-          <button type="button" className="admin-btn admin-btn-ghost" onClick={() => void onSignOut()}>
-            <LogOut size={15} strokeWidth={1.8} />
-            <span>Log out</span>
-          </button>
-        </div>
-
-        <p className="admin-subtitle">
-          Create, edit, and remove blog posts. Changes are saved to the same blog
-          feed the public <code>Blog</code> section reads from.
-        </p>
-
-        {posts.length > 0 && (
-          <div className="admin-stat-row">
-            <span className="admin-stat"><strong>{posts.length}</strong> published post{posts.length === 1 ? '' : 's'}</span>
-          </div>
-        )}
-
-        {posts.length === 0 ? (
-          <div className="admin-empty">
-            <div className="blog-empty-icon"><NotebookPen size={22} strokeWidth={1.6} /></div>
-            <p>No posts yet. Create your first notebook entry below.</p>
-          </div>
-        ) : (
-          <ul className="admin-post-list">
-            {posts.map((post) => (
-              <li className="admin-post-row" key={post.slug}>
-                <div className="admin-post-main">
-                  <span className="admin-post-category">{post.category}</span>
-                  <h3 className="admin-post-title">{post.title}</h3>
-                  <p className="admin-post-excerpt">{post.excerpt}</p>
-                  <span className="admin-post-meta">{post.date} · {post.readTime} · /blog/{post.slug}</span>
-                </div>
-                <div className="admin-post-actions">
-                  <button
-                    type="button"
-                    className="admin-btn admin-btn-secondary"
-                    onClick={() => setEditor({ kind: 'edit', post })}
-                  >
-                    <Pencil size={14} strokeWidth={1.8} />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="admin-btn admin-btn-danger"
-                    onClick={() => {
-                      if (window.confirm(`Delete "${post.title}"? This cannot be undone.`)) {
-                        deleteBlogPost(post.slug);
-                      }
-                    }}
-                  >
-                    <Trash2 size={14} strokeWidth={1.8} />
-                    <span>Delete</span>
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {editor.kind === 'closed' ? (
-          <button type="button" className="admin-btn admin-btn-primary admin-new-post" onClick={() => setEditor({ kind: 'create' })}>
-            <Plus size={16} strokeWidth={2} />
-            <span>New post</span>
-          </button>
-        ) : (
-          <PostEditor
-            key={editor.kind === 'edit' ? editor.post.slug : 'create'}
-            initial={editor.kind === 'edit' ? editor.post : undefined}
-            onCancel={() => setEditor({ kind: 'closed' })}
-            onSave={handleSave}
-          />
-        )}
-      </div>
-    </AdminShell>
-  );
-}
-
-function PostEditor({
-  initial,
-  onCancel,
-  onSave,
-}: {
-  initial?: BlogPost;
-  onCancel: () => void;
-  onSave: (draft: BlogPostDraft) => void;
-}) {
-  const [title, setTitle] = useState(initial?.title ?? '');
-  const [category, setCategory] = useState<BlogCategory>(initial?.category ?? 'Calculator Guides');
-  const [excerpt, setExcerpt] = useState(initial?.excerpt ?? '');
-  const [content, setContent] = useState(initial?.content.join('\n') ?? '');
-  const [relatedCalculator, setRelatedCalculator] = useState(initial?.relatedCalculator ?? '');
-  const [relatedCalculatorLabel, setRelatedCalculatorLabel] = useState(initial?.relatedCalculatorLabel ?? '');
-  const [error, setError] = useState<string | null>(null);
-
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    const paragraphs = content
-      .split('\n')
-      .map((paragraph) => paragraph.trim())
-      .filter(Boolean);
-
-    if (!title.trim()) {
-      setError('Add a title for the post.');
-      return;
-    }
-    if (!excerpt.trim()) {
-      setError('Add a short excerpt — it shows on the blog cards and in search results.');
-      return;
-    }
-    if (paragraphs.length === 0) {
-      setError('Add at least one paragraph of content.');
-      return;
-    }
-
-    onSave({
-      title,
-      category,
-      excerpt,
-      content: paragraphs,
-      relatedCalculator: relatedCalculator.trim(),
-      relatedCalculatorLabel: relatedCalculator.trim() ? (relatedCalculatorLabel.trim() || relatedCalculator.trim()) : '',
-    });
-  };
+  const actions = [
+    { label: 'All blogs', hint: 'Edit, search or delete existing posts', icon: <FolderOpen size={20} strokeWidth={1.8} />, to: '/blog' },
+    { label: 'Add new blog', hint: 'Write and publish a fresh article', icon: <FilePlus2 size={20} strokeWidth={1.8} />, to: '/blog/new' },
+    { label: 'Categories', hint: 'Manage blog & calculator categories', icon: <FolderTree size={20} strokeWidth={1.8} />, to: '/blog?tab=categories' },
+  ];
 
   return (
-    <form className="admin-editor input-card" onSubmit={submit} noValidate>
-      <div className="admin-editor-heading">
-        <span className="form-card-heading">
-          <span>{initial ? 'Edit post' : 'New post'}</span>
-          <span className="pencil-line" />
-        </span>
-        <button type="button" className="admin-btn admin-btn-ghost admin-btn-icon" onClick={onCancel} aria-label="Close editor">
-          <X size={16} />
-        </button>
-      </div>
-
-      <div className="field-wrap">
-        <label htmlFor="post-title" className="field-label">Title</label>
-        <div className="admin-input-shell">
-          <input
-            id="post-title"
-            className="admin-input-field"
-            type="text"
-            placeholder="e.g. How to plan a home loan EMI"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
+    <div className="asb-content">
+      <div className="asb-stat-grid">
+        <div className="asb-stat-card">
+          <span className="asb-stat-value">{posts.length}</span>
+          <span className="asb-stat-label">Total posts</span>
+        </div>
+        <div className="asb-stat-card">
+          <span className="asb-stat-value">{published}</span>
+          <span className="asb-stat-label">Published</span>
+        </div>
+        <div className="asb-stat-card">
+          <span className="asb-stat-value">{drafts}</span>
+          <span className="asb-stat-label">Drafts</span>
         </div>
       </div>
 
-      <div className="field-wrap">
-        <label htmlFor="post-category" className="field-label">Category</label>
-        <div className="admin-input-shell">
-          <select
-            id="post-category"
-            className="admin-input-field"
-            value={category}
-            onChange={(event) => setCategory(event.target.value as BlogCategory)}
-          >
-            {blogCategories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="field-wrap">
-        <label htmlFor="post-excerpt" className="field-label">Excerpt</label>
-        <div className="admin-input-shell">
-          <textarea
-            id="post-excerpt"
-            className="admin-input-field"
-            rows={2}
-            placeholder="One or two sentences shown on the blog card."
-            value={excerpt}
-            onChange={(event) => setExcerpt(event.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="field-wrap">
-        <label htmlFor="post-content" className="field-label">Content</label>
-        <p className="field-hint">One paragraph per line. Blank lines between paragraphs are ignored.</p>
-        <div className="admin-input-shell">
-          <textarea
-            id="post-content"
-            className="admin-input-field admin-input-content"
-            rows={12}
-            placeholder={'First paragraph of the article...\n\nSecond paragraph...'}
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="admin-editor-grid">
-        <div className="field-wrap">
-          <label htmlFor="post-calc" className="field-label">Related calculator path</label>
-          <div className="admin-input-shell">
-            <input
-              id="post-calc"
-              className="admin-input-field"
-              type="text"
-              placeholder="e.g. /emi-calculator"
-              value={relatedCalculator}
-              onChange={(event) => setRelatedCalculator(event.target.value)}
-            />
-          </div>
-        </div>
-        <div className="field-wrap">
-          <label htmlFor="post-calc-label" className="field-label">Call-to-action label</label>
-          <div className="admin-input-shell">
-            <input
-              id="post-calc-label"
-              className="admin-input-field"
-              type="text"
-              placeholder="e.g. Try the EMI calculator"
-              value={relatedCalculatorLabel}
-              onChange={(event) => setRelatedCalculatorLabel(event.target.value)}
-            />
-          </div>
-        </div>
-      </div>
-
-      {error && <p className="field-error admin-editor-error" role="alert">{error}</p>}
-
-      <div className="admin-editor-actions">
-        <button type="button" className="admin-btn admin-btn-ghost" onClick={onCancel}>Cancel</button>
-        <button type="submit" className="admin-btn admin-btn-primary">
-          <Save size={15} />
-          <span>{initial ? 'Save changes' : 'Publish post'}</span>
-        </button>
-      </div>
-    </form>
-  );
-}
-
-function AdminShell({ children }: { children: ReactNode }) {
-  return (
-    <main className="notebook-page min-h-[100dvh]">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
-        <div className="admin-brand">
-          <div className="brand-lockup">
-            <div className="brand-mark" aria-hidden="true">CN</div>
-            <div>
-              <div className="brand-name">Calc Notebook</div>
-              <div className="brand-subtitle">admin portal</div>
+      <h2 className="asb-block-title">Quick actions</h2>
+      <div className="asb-action-grid">
+        {actions.map((action) => (
+          <button key={action.label} type="button" className="asb-action-card" onClick={() => setLocation(adminPath(action.to))}>
+            <div className="asb-action-icon">{action.icon}</div>
+            <div className="asb-action-main">
+              <span className="asb-action-label">{action.label}</span>
+              <span className="asb-action-hint">{action.hint}</span>
             </div>
-          </div>
-        </div>
-        {children}
+            <ArrowRight size={17} strokeWidth={1.9} className="asb-action-arrow" />
+          </button>
+        ))}
       </div>
-    </main>
-  );
-}
 
-function LoadingPanel() {
-  return (
-    <div className="admin-loading">
-      <Loader2 size={20} strokeWidth={1.8} className="admin-spin" />
-      <span>Checking your session…</span>
+      <h2 className="asb-block-title">Recent posts</h2>
+      {recent.length === 0 ? (
+        <div className="asb-empty">
+          <NotebookPen size={20} strokeWidth={1.6} />
+          <p>No posts yet. Create your first blog post to get started.</p>
+        </div>
+      ) : (
+        <ul className="asb-recent-list">
+          {recent.map((post) => (
+            <li key={post.slug} className="asb-recent-row">
+              <div className="asb-recent-main">
+                <div className="asb-recent-meta">
+                  <span className={`asb-chip${post.status === 'draft' ? ' asb-chip-draft' : ''}`}>{post.status}</span>
+                  <span className="asb-recent-category">{post.category}</span>
+                </div>
+                <h3 className="asb-recent-title">{post.title}</h3>
+                <p className="asb-recent-excerpt">{post.excerpt}</p>
+              </div>
+              <button
+                type="button"
+                className="asb-row-action"
+                onClick={() => setLocation(adminPath(`/blog/edit/${encodeURIComponent(post.slug)}`))}
+              >
+                Edit
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
-
-export default AdminDashboard;

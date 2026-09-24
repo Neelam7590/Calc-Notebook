@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Scale,
   Sparkles,
+  Stamp,
   WalletCards,
   type LucideIcon,
 } from 'lucide-react';
@@ -22,13 +23,19 @@ import NotFound from '@/pages/not-found';
 import BlogList from '@/pages/blog/BlogList';
 import BlogPost from '@/pages/blog/BlogPost';
 import AdminLogin from '@/pages/admin/admin-login';
-import AdminDashboard from '@/pages/admin/admin-dashboard';
+import AdminApp from '@/pages/admin/admin-app';
+import AdminRecovery from '@/pages/admin/admin-recovery';
 import { AdminAuthProvider } from '@/pages/admin/admin-auth';
 import Terms from '@/pages/legal/Terms';
 import Privacy from '@/pages/legal/Privacy';
 import Disclaimer from '@/pages/legal/Disclaimer';
 import FAQ from '@/pages/legal/FAQ';
+import AreasIndex from '@/pages/areas/AreasIndex';
+import AreaPage from '@/pages/areas/AreaPage';
+import BestForPage from '@/pages/bestFor/BestForPage';
+import CategoryPage from '@/pages/categories/CategoryPage';
 import { calculatorSeoContent, homeSeoSections, type SeoSection } from './seoContent';
+import { haryanaCities, haryanaStampDuty, haryanaRegistrationFee, type AreaType, type BuyerType } from '@/data/haryanaRates';
 import {
   TopBar,
   calculatorMeta,
@@ -41,12 +48,13 @@ import { SiteFooter } from '@/components/site-footer';
 const queryClient = new QueryClient();
 
 const relatedCalculators: Record<CalculatorId, CalculatorId[]> = {
-  emi: ['gst', 'percentage'],
+  emi: ['gst', 'percentage', 'stamp-duty'],
   age: ['bmi', 'percentage'],
   percentage: ['gst', 'cgpa'],
   bmi: ['age', 'percentage'],
   gst: ['emi', 'percentage'],
   cgpa: ['percentage', 'gst'],
+  'stamp-duty': ['emi', 'gst'],
 };
 
 const money = (value: number) =>
@@ -76,8 +84,8 @@ function Home() {
     <main className="notebook-page min-h-[100dvh]">
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <PageSeo
-          title="Free Online Calculators – EMI, Age, BMI, Percentage, GST | Calc Notebook"
-          description="Free online calculators for EMI, age, percentage, BMI, and GST. Fast, accurate, and easy to use — no signup required."
+          title="Free Online Calculators – Stamp Duty, EMI, Age, BMI, GST | Calc Notebook"
+          description="Free online calculators for Haryana stamp duty, EMI, age, percentage, BMI, and GST. Fast, accurate, and easy to use — no signup required."
           path="/"
           website
         />
@@ -100,7 +108,7 @@ function Home() {
           </div>
           <div className="desk-note" aria-label="Notebook note">
             <Sparkles size={16} strokeWidth={1.8} />
-            <span>Six essentials, kept pleasantly simple.</span>
+            <span>Seven essentials, kept pleasantly simple.</span>
           </div>
         </section>
 
@@ -498,9 +506,9 @@ function CalculatorLayout({
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <TopBar activeId={calculator.id} />
         <div className="calculator-view animate-rise">
-          <button type="button" className="back-button" onClick={onBack} data-testid="button-back-to-calculators">
+          <button type="button" className="back-button" onClick={() => { if (window.history.length > 1) { window.history.back(); } else { onBack(); } }} data-testid="button-back-to-calculators">
             <ArrowLeft size={16} />
-            <span>Back to calculators</span>
+            <span>Back</span>
           </button>
           <div className="calculator-heading">
             <div className={`heading-icon heading-icon-${calculator.tint}`}><Icon size={28} strokeWidth={1.6} /></div>
@@ -670,7 +678,7 @@ function EmiCalculator({ onBack }: { onBack: () => void }) {
     if (!errors.loan && !errors.rate && !errors.tenure) setCalculated(true);
   };
   return (
-    <CalculatorLayout calculator={calculatorMeta[0]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'emi')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Fill in the details</span><span className="pencil-line" /></div>
@@ -736,7 +744,7 @@ function AgeCalculator({ onBack }: { onBack: () => void }) {
     if (!error) setCalculated(true);
   };
   return (
-    <CalculatorLayout calculator={calculatorMeta[1]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'age')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Find your exact age</span><span className="pencil-line" /></div>
@@ -790,7 +798,7 @@ function PercentageCalculator({ onBack }: { onBack: () => void }) {
     if (!errors.x && !errors.y) setCalculated(true);
   };
   return (
-    <CalculatorLayout calculator={calculatorMeta[2]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'percentage')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Pick a question</span><span className="pencil-line" /></div>
@@ -839,7 +847,7 @@ function BmiCalculator({ onBack }: { onBack: () => void }) {
     if (!errors.height && !errors.weight) setCalculated(true);
   };
   return (
-    <CalculatorLayout calculator={calculatorMeta[3]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'bmi')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Take a quick snapshot</span><span className="pencil-line" /></div>
@@ -887,7 +895,7 @@ function GstCalculator({ onBack }: { onBack: () => void }) {
     if (!error) setCalculated(true);
   };
   return (
-    <CalculatorLayout calculator={calculatorMeta[4]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'gst')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Set up your tax calculation</span><span className="pencil-line" /></div>
@@ -1020,7 +1028,7 @@ function CgpaCalculator({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <CalculatorLayout calculator={calculatorMeta[5]} onBack={onBack}>
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'cgpa')!} onBack={onBack}>
       <div className="calculator-columns">
         <form className="input-card" onSubmit={submit}>
           <div className="form-card-heading"><span>Add your subjects</span><span className="pencil-line" /></div>
@@ -1111,6 +1119,119 @@ function CgpaCalculator({ onBack }: { onBack: () => void }) {
   );
 }
 
+function StampDutyCalculator({ onBack }: { onBack: () => void }) {
+  const [propertyValue, setPropertyValue] = useState('');
+  const [cityId, setCityId] = useState(haryanaCities[0].id);
+  const [areaType, setAreaType] = useState<AreaType>('urban');
+  const [buyer, setBuyer] = useState<BuyerType>('joint-male-female');
+  const [area, setArea] = useState('');
+  const [attempted, setAttempted] = useState(false);
+  const [calculated, setCalculated] = useState(false);
+
+  const valueNumber = Number(propertyValue);
+  const areaNumber = Number(area);
+  const city = haryanaCities.find((item) => item.id === cityId) ?? haryanaCities[0];
+
+  const errors = {
+    value: attempted && (!propertyValue || valueNumber <= 0) ? 'Enter a property value greater than zero.' : '',
+    area: attempted && area && (!Number.isFinite(areaNumber) || areaNumber <= 0)
+      ? 'Plot area needs to be a positive number of square yards.'
+      : '',
+  };
+
+  const result = useMemo(() => {
+    if (valueNumber <= 0) return null;
+    if (area && (!Number.isFinite(areaNumber) || areaNumber <= 0)) return null;
+    const circleValue = areaNumber > 0 ? areaNumber * city.typicalRatePerSqYard : 0;
+    const taxableBase = Math.max(valueNumber, circleValue);
+    const rate = haryanaStampDuty[areaType][buyer];
+    const duty = taxableBase * rate;
+    const registration = haryanaRegistrationFee(taxableBase);
+    return { taxableBase, rate, duty, registration, total: duty + registration, circleValue };
+  }, [valueNumber, areaNumber, city.typicalRatePerSqYard, areaType, buyer]);
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    setAttempted(true);
+    if (!errors.value && !errors.area) setCalculated(true);
+  };
+
+  const buyerLabels: Record<BuyerType, string> = {
+    male: 'Male',
+    female: 'Female',
+    'joint-male-female': 'Joint (Male + Female)',
+    'joint-two-males': 'Joint (Two Males)',
+    'joint-two-females': 'Joint (Two Females)',
+  };
+
+  return (
+    <CalculatorLayout calculator={calculatorMeta.find((meta) => meta.id === 'stamp-duty')!} onBack={onBack}>
+      <div className="calculator-columns">
+        <form className="input-card" onSubmit={submit}>
+          <div className="form-card-heading"><span>Set up your property details</span><span className="pencil-line" /></div>
+          <div className="field-wrap">
+            <span className="field-label">Area type</span>
+            <div className="segmented-control" role="group" aria-label="Area type">
+              <button type="button" className={areaType === 'urban' ? 'segment-active' : ''} onClick={() => { setAreaType('urban'); setCalculated(false); }} data-testid="button-stamp-area-urban">Urban (Within MC)</button>
+              <button type="button" className={areaType === 'rural' ? 'segment-active' : ''} onClick={() => { setAreaType('rural'); setCalculated(false); }} data-testid="button-stamp-area-rural">Rural (Outside MC)</button>
+            </div>
+            <p className="field-hint">Stamp duty rates differ inside municipal limits and outside them.</p>
+          </div>
+          <div className="field-wrap">
+            <label htmlFor="stamp-buyer" className="field-label">Khaaridaar / Buyer</label>
+            <div className="input-shell">
+              <select id="stamp-buyer" value={buyer} onChange={(event) => { setBuyer(event.target.value as BuyerType); setCalculated(false); }} data-testid="select-stamp-buyer">
+                {(Object.keys(buyerLabels) as BuyerType[]).map((type) => (
+                  <option key={type} value={type}>{buyerLabels[type]} — {decimal(haryanaStampDuty[areaType][type] * 100)}%</option>
+                ))}
+              </select>
+            </div>
+            <p className="field-hint">Haryana applies different stamp duty rates by buyer category.</p>
+          </div>
+          <TextField id="stamp-value" label="Property value" value={propertyValue} onChange={(value) => { setPropertyValue(value); setCalculated(false); }} placeholder="e.g. 3000000" suffix="INR" hint="The agreement value or amount mentioned in the sale deed." error={errors.value} min="0" step="10000" testId="input-stamp-value" />
+          <div className="field-wrap">
+            <label htmlFor="stamp-city" className="field-label">Location (Haryana)</label>
+            <div className="input-shell">
+              <select id="stamp-city" value={cityId} onChange={(event) => { setCityId(event.target.value); setCalculated(false); }} data-testid="select-stamp-city">
+                {haryanaCities.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+              <span className="input-suffix">Haryana</span>
+            </div>
+            <p className="field-hint">Reference circle rate: {decimal(city.typicalRatePerSqYard, 0)} – {decimal(city.highRatePerSqYard, 0)} per sq yd.</p>
+          </div>
+          <TextField id="stamp-area" label="Plot area (optional)" value={area} onChange={(value) => { setArea(value); setCalculated(false); }} placeholder="e.g. 150" suffix="sq yd" hint="Enter the plot size to compare with the circle rate. Leave blank to use the agreement value." error={errors.area} min="0" step="1" testId="input-stamp-area" />
+          <CalculateButton testId="button-calculate-stamp-duty">Calculate stamp duty</CalculateButton>
+        </form>
+        <div className="result-column">
+          {calculated && result ? (
+            <ResultPanel title="Estimated Haryana charges">
+              <div className="hero-result">
+                <span>Stamp duty</span>
+                <strong data-testid="result-stamp-duty">{money(result.duty)}</strong>
+                <small>at {decimal(result.rate * 100)}% on {money(result.taxableBase)}</small>
+              </div>
+              <div className="result-stat-grid">
+                <ResultStat label="Registration fee" value={money(result.registration)} testId="result-stamp-registration" />
+                <ResultStat label="Total cost" value={money(result.total)} featured testId="result-stamp-total" />
+              </div>
+              <p className="result-footnote">
+                {result.circleValue > valueNumber
+                  ? `The circle rate for an area of ${areaNumber} sq yd in ${city.name} is higher than the entered value, so duty is calculated on that circle-rate base. `
+                  : ''}
+                Registration uses a slab-based fee. An estimate based on the city reference circle rate; verify the exact locality rate and current slabs with the sub-registrar before registering.
+              </p>
+            </ResultPanel>
+          ) : (
+            <EmptyResult icon={Stamp} title="Your property costs will appear here." detail="Add the property value, choose a Haryana city, area type, and buyer category to see stamp duty and registration." />
+          )}
+        </div>
+      </div>
+    </CalculatorLayout>
+  );
+}
+
 function CalculatorPage({ calculatorId }: { calculatorId: CalculatorId }) {
   const [, setLocation] = useLocation();
   const content = calculatorSeoContent[calculatorId];
@@ -1141,6 +1262,7 @@ function CalculatorPage({ calculatorId }: { calculatorId: CalculatorId }) {
       {calculatorId === 'bmi' && <BmiCalculator {...calculatorProps} />}
       {calculatorId === 'gst' && <GstCalculator {...calculatorProps} />}
       {calculatorId === 'cgpa' && <CgpaCalculator {...calculatorProps} />}
+      {calculatorId === 'stamp-duty' && <StampDutyCalculator {...calculatorProps} />}
     </>
   );
 }
@@ -1169,20 +1291,38 @@ function Router() {
         <Route path="/cgpa-calculator">
           <CalculatorPage calculatorId="cgpa" />
         </Route>
+        <Route path="/stamp-duty-calculator">
+          <CalculatorPage calculatorId="stamp-duty" />
+        </Route>
         <Route path="/blog" component={BlogList} />
         <Route path="/blog/:slug" component={BlogPost} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/disclaimer" component={Disclaimer} />
         <Route path="/faq" component={FAQ} />
+        <Route path="/areas" component={AreasIndex} />
+        <Route path="/areas/:slug">
+          <AreaPage />
+        </Route>
+        <Route path="/best-for/:slug">
+          <BestForPage />
+        </Route>
+        <Route path="/categories/:slug">
+          <CategoryPage />
+        </Route>
         <Route path="/manage-portal-x7k9">
           <AdminAuthProvider>
             <AdminLogin />
           </AdminAuthProvider>
         </Route>
-        <Route path="/manage-portal-x7k9/dashboard">
+        <Route path="/manage-portal-x7k9/recovery">
           <AdminAuthProvider>
-            <AdminDashboard />
+            <AdminRecovery />
+          </AdminAuthProvider>
+        </Route>
+        <Route path="/manage-portal-x7k9/*">
+          <AdminAuthProvider>
+            <AdminApp />
           </AdminAuthProvider>
         </Route>
         <Route component={NotFound} />
@@ -1193,7 +1333,17 @@ function Router() {
 
 function ScrollToTop() {
   const [location] = useLocation();
+  const skipNext = useRef(false);
   useEffect(() => {
+    const markBack = () => { skipNext.current = true; };
+    window.addEventListener('popstate', markBack);
+    return () => window.removeEventListener('popstate', markBack);
+  }, []);
+  useEffect(() => {
+    if (skipNext.current) {
+      skipNext.current = false;
+      return;
+    }
     window.scrollTo(0, 0);
   }, [location]);
   return null;

@@ -3,6 +3,7 @@ import { Link, useRoute, useLocation } from 'wouter';
 import { ArrowLeft, ArrowRight, PenLine } from 'lucide-react';
 import { TopBar } from '@/components/top-bar';
 import { SiteFooter } from '@/components/site-footer';
+import { BackButton } from '@/components/back-button';
 import { useBlogPosts } from '@/data/blogData';
 
 export default function BlogPost() {
@@ -16,13 +17,39 @@ export default function BlogPost() {
       ? `${post.title} – Finance & Calculator Guides | Calc Notebook`
       : 'Blog – Finance & Calculator Guides | Calc Notebook';
     const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    if (meta) meta.setAttribute('content', 'Read helpful guides on finance, loans, tax, GST, and how to use our free calculators.');
+    if (meta) meta.setAttribute('content', post ? post.metaDescription || post.excerpt : 'Read helpful guides on finance, loans, tax, GST, and how to use our free calculators.');
+
+    // Posts with FAQs also emit a FAQPage schema for search engines.
+    const faqs = post?.faqs?.filter((faq) => faq.question && faq.answer) ?? [];
+    let script = document.getElementById('faq-jsonld') as HTMLScriptElement | null;
+    if (faqs.length > 0) {
+      if (!script) {
+        script = document.createElement('script');
+        script.id = 'faq-jsonld';
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+      script.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+      });
+    } else if (script) {
+      script.remove();
+    }
   }, [post]);
 
   return (
     <main className="notebook-page min-h-[100dvh]">
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <TopBar activeSection="blog" />
+        <div className="back-wrap">
+          <BackButton />
+        </div>
 
         <div className="blog-page animate-rise">
           <button type="button" className="back-button" onClick={() => setLocation('/blog')}>
@@ -41,11 +68,46 @@ export default function BlogPost() {
                 </div>
               </div>
 
+              {(post.calculatorCategories && post.calculatorCategories.length > 0) ||
+              (post.tags && post.tags.length > 0) ? (
+                <div className="blog-topics">
+                  {post.calculatorCategories?.map((cat) => (
+                    <span key={cat} className="blog-chip">{cat}</span>
+                  ))}
+                  {post.tags?.map((tag) => (
+                    <span key={tag} className="blog-chip blog-chip-tag">#{tag}</span>
+                  ))}
+                </div>
+              ) : null}
+
+              {post.featuredImage && (
+                <img className="blog-article-img" src={post.featuredImage} alt={post.title} loading="lazy" />
+              )}
+
               <div className="blog-article-body">
                 {post.content.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
+                  <div
+                    key={index}
+                    className="blog-block"
+                    dangerouslySetInnerHTML={{ __html: paragraph }}
+                  />
                 ))}
               </div>
+
+              {post.faqs && post.faqs.filter((faq) => faq.question && faq.answer).length > 0 && (
+                <section className="blog-faq" aria-label="Frequently asked questions">
+                  <span className="card-eyebrow">FAQS</span>
+                  <h2 className="blog-faq-title">Frequently asked questions</h2>
+                  {post.faqs
+                    .filter((faq) => faq.question && faq.answer)
+                    .map((faq, index) => (
+                      <details key={index} className="blog-faq-item">
+                        <summary>{faq.question}</summary>
+                        <p>{faq.answer}</p>
+                      </details>
+                    ))}
+                </section>
+              )}
 
               {post.relatedCalculator && (
                 <div className="blog-article-cta">

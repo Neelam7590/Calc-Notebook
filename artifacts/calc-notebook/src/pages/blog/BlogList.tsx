@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { PenLine } from 'lucide-react';
 import { TopBar } from '@/components/top-bar';
 import { SiteFooter } from '@/components/site-footer';
+import { BackButton } from '@/components/back-button';
 import { useBlogPosts, blogCategories, type BlogCategory } from '@/data/blogData';
 
 function PageSeo({ title, description }: { title: string; description: string; path: string }) {
@@ -19,8 +20,8 @@ export default function BlogList() {
   const blogPosts = useBlogPosts();
 
   const filtered = activeCategory === 'All'
-    ? blogPosts
-    : blogPosts.filter((post) => post.category === activeCategory);
+    ? blogPosts.filter((post) => post.status === 'published')
+    : blogPosts.filter((post) => post.status === 'published' && post.category === activeCategory);
 
   return (
     <main className="notebook-page min-h-[100dvh]">
@@ -31,6 +32,9 @@ export default function BlogList() {
           path="/blog"
         />
         <TopBar activeSection="blog" />
+        <div className="back-wrap">
+          <BackButton />
+        </div>
 
         <section className="blog-page animate-rise">
           <div className="blog-page-header">
@@ -73,8 +77,18 @@ export default function BlogList() {
                     <span className="blog-card-category">{post.category}</span>
                     <span className="blog-card-time">{post.readTime}</span>
                   </div>
+                  {post.featuredImage && (
+                    <img className="blog-card-img" src={post.featuredImage} alt="" loading="lazy" />
+                  )}
                   <h2 className="blog-card-title">{post.title}</h2>
                   <p className="blog-card-excerpt">{post.excerpt}</p>
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="blog-card-tags">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="blog-chip blog-chip-tag">#{tag}</span>
+                      ))}
+                    </div>
+                  )}
                   <div className="blog-card-bottom">
                     <span className="blog-card-date">{new Date(post.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                     <span className="blog-card-link">Read More</span>

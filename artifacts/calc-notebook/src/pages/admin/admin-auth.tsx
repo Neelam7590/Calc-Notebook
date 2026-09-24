@@ -15,6 +15,10 @@ type AdminAuthContextValue = {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
+  changePassword: (password: string) => Promise<string | null>;
+  sendOtp: (email: string) => Promise<string | null>;
+  verifyOtp: (email: string, token: string) => Promise<string | null>;
+  finishPasswordReset: (password: string) => Promise<string | null>;
 };
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
@@ -59,9 +63,43 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     await getSupabase().auth.signOut();
   }, []);
 
+  const changePassword = useCallback(async (password: string) => {
+    const { error } = await getSupabase().auth.updateUser({ password });
+    return error?.message ?? null;
+  }, []);
+
+  /*
+   * Sends a one-time code (OTP) to the email address so we can confirm the
+   * person asking for a password reset actually owns the account. The code is
+   * entered on /manage-portal-x7k9/recovery (verifyOtp), which then allows a
+   * password change.
+   */
+  const sendOtp = useCallback(async (email: string) => {
+    const { error } = await getSupabase().auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: false },
+    });
+    return error?.message ?? null;
+  }, []);
+
+  // Confirms the email via the 6-digit OTP; on success Supabase opens a
+  // short-lived recovery session for the next step (finishPasswordReset).
+  const verifyOtp = useCallback(async (email: string, token: string) => {
+    const { error } = await getSupabase().auth.verifyOtp({ email, token, type: 'email' });
+    return error?.message ?? null;
+  }, []);
+
+  // Used by the recovery page: set the new password, then end the recovery session.
+  const finishPasswordReset = useCallback(async (password: string) => {
+    const { error } = await getSupabase().auth.updateUser({ password });
+    if (error) return error.message;
+    await getSupabase().auth.signOut();
+    return null;
+  }, []);
+
   const value = useMemo(
-    () => ({ session, loading, signIn, signOut }),
-    [session, loading, signIn, signOut],
+    () => ({ session, loading, signIn, signOut, changePassword, sendOtp, verifyOtp, finishPasswordReset }),
+    [session, loading, signIn, signOut, changePassword, sendOtp, verifyOtp, finishPasswordReset],
   );
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;

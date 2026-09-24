@@ -7,10 +7,11 @@ import {
   Landmark,
   NotebookPen,
   Percent,
+  Stamp,
   type LucideIcon,
 } from 'lucide-react';
 
-export type CalculatorId = 'emi' | 'age' | 'percentage' | 'bmi' | 'gst' | 'cgpa';
+export type CalculatorId = 'emi' | 'age' | 'percentage' | 'bmi' | 'gst' | 'cgpa' | 'stamp-duty';
 
 export type CalculatorMeta = {
   id: CalculatorId;
@@ -28,13 +29,22 @@ export const calculatorPath = (id: CalculatorId) => `/${id}-calculator`;
 
 export const calculatorMeta: CalculatorMeta[] = [
   {
+    id: 'stamp-duty',
+    name: 'Stamp Duty Calculator',
+    description: 'Estimate Haryana property registration costs before you buy.',
+    eyebrow: 'Property',
+    icon: Stamp,
+    tint: 'gold',
+    number: '01',
+  },
+  {
     id: 'emi',
     name: 'EMI Calculator',
     description: 'See the true cost of a loan before you sign.',
     eyebrow: 'Borrowing',
     icon: Landmark,
     tint: 'coral',
-    number: '01',
+    number: '02',
   },
   {
     id: 'age',
@@ -43,7 +53,7 @@ export const calculatorMeta: CalculatorMeta[] = [
     eyebrow: 'Milestones',
     icon: CalendarDays,
     tint: 'gold',
-    number: '02',
+    number: '03',
   },
   {
     id: 'percentage',
@@ -52,7 +62,7 @@ export const calculatorMeta: CalculatorMeta[] = [
     eyebrow: 'Everyday math',
     icon: Percent,
     tint: 'blue',
-    number: '03',
+    number: '04',
   },
   {
     id: 'bmi',
@@ -61,7 +71,7 @@ export const calculatorMeta: CalculatorMeta[] = [
     eyebrow: 'Wellbeing',
     icon: HeartPulse,
     tint: 'sage',
-    number: '04',
+    number: '05',
   },
   {
     id: 'gst',
@@ -70,7 +80,7 @@ export const calculatorMeta: CalculatorMeta[] = [
     eyebrow: 'Money stuff',
     icon: BadgePercent,
     tint: 'plum',
-    number: '05',
+    number: '06',
   },
   {
     id: 'cgpa',
@@ -79,7 +89,7 @@ export const calculatorMeta: CalculatorMeta[] = [
     eyebrow: 'Academics',
     icon: GraduationCap,
     tint: 'blue',
-    number: '06',
+    number: '07',
   },
 ];
 

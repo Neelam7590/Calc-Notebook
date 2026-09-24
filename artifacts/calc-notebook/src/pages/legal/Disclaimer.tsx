@@ -1,72 +1,105 @@
 import { useEffect } from 'react';
 import { TopBar } from '@/components/top-bar';
 import { SiteFooter } from '@/components/site-footer';
+import { BackButton } from '@/components/back-button';
+
+const toolDisclaimers = [
+  {
+    tag: 'STAMP DUTY · HARYANA',
+    title: 'Stamp Duty Calculator',
+    text: 'Shows an estimate only. Rates and registration fees change through Haryana budgets and notifications. Notes for women/joint buyers may require an actual purchase deed under the buyer of record. Verify the current slab and circle rate with the Haryana Stamp and Registration Department before registering any document.',
+  },
+  {
+    tag: 'FINANCE',
+    title: 'EMI Calculator',
+    text: 'Monthly instalments are estimates for a regular reducing-balance loan. Lenders add processing fees, insurance, and interest calculations that vary. Use your lender’s official sanction letter for exact figures.',
+  },
+  {
+    tag: 'PERSONAL',
+    title: 'Age Calculator',
+    text: 'Returns the exact calendar difference between two dates, not a legal interpretation of age. Official eligibility depends on the authority’s rules and the date on your identity document.',
+  },
+  {
+    tag: 'MATH',
+    title: 'Percentage Calculator',
+    text: 'Each mode solves a distinct type of percent problem. Confirm the base value and what is being asked — "percentage of", "percentage change", or reverse — before using the result.',
+  },
+  {
+    tag: 'HEALTH',
+    title: 'BMI Calculator',
+    text: 'A quick population-scale classification, not a personal health assessment. It cannot distinguish muscle from fat or consider age, ethnicity, or medical conditions. Discuss any result with a qualified doctor.',
+  },
+  {
+    tag: 'TAX',
+    title: 'GST Calculator',
+    text: 'Common rates are provided for convenience. The legally applicable rate depends on the goods or service and government notifications, which change over time. Confirm with a tax professional.',
+  },
+  {
+    tag: 'ACADEMIC',
+    title: 'CGPA Calculator',
+    text: 'Useful for estimating an equivalent percentage on the standard 9.5 conversion, but institutions define their own official scales. For applications, use the score issued by your institution.',
+  },
+];
 
 export default function Disclaimer() {
   useEffect(() => {
     document.title = 'Disclaimer | Calc Notebook';
     const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    if (meta) meta.setAttribute('content', "Important disclaimer about the accuracy and use of Calc Notebook's free calculators.");
+    if (meta) meta.setAttribute('content', 'Calc Notebook disclaimer: all calculators provide estimates for general guidance only and never replace professional financial, medical, legal, tax, or academic advice.');
   }, []);
 
   return (
     <main className="notebook-page min-h-[100dvh]">
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8">
         <TopBar activeSection="disclaimer" />
+        <div className="back-wrap">
+          <BackButton />
+        </div>
 
-        <article className="legal-page animate-rise">
+        <article className="legal-page legal-theme-gold animate-rise" style={{ maxWidth: '56rem' }}>
           <div className="blog-article-header">
-            <div className="home-kicker"><span className="kicker-line" /><span>LEGAL</span></div>
+            <span className="legal-kicker">NOTICE · READ FIRST</span>
             <h1 className="calculator-title">Disclaimer</h1>
-            <p className="calculator-subtitle">Last updated: September 1, 2026</p>
+            <p className="calculator-subtitle">The calculators on Calc Notebook are free tools for quick, everyday estimates — not professional advice. Here is exactly what the numbers can and cannot do.</p>
+            <div className="legal-led">
+              <span className="legal-chip">Last updated: September 22, 2026</span>
+              <span className="legal-chip">Read time: about 2 minutes</span>
+            </div>
           </div>
 
-          <div className="legal-content">
-            <section>
-              <h2>General Disclaimer</h2>
-              <p>The information and tools provided on Calc Notebook are for general informational and educational purposes only. While we strive for accuracy, we make no representations or warranties about the completeness, reliability, or suitability of the calculators, content, or results for any specific purpose.</p>
-            </section>
-
-            <section>
-              <h2>EMI Calculator Disclaimer</h2>
-              <p>The EMI Calculator provides estimates based on standard equated monthly instalment formulas. Actual loan EMIs may vary based on your bank's specific calculation method, daily reducing or monthly reducing balance approach, processing fees, insurance charges, and other factors. The results should not be considered as a binding offer from any financial institution. Always confirm the exact EMI with your lender before signing a loan agreement.</p>
-            </section>
-
-            <section>
-              <h2>Age Calculator Disclaimer</h2>
-              <p>The Age Calculator calculates age based on the Gregorian calendar. Results are accurate for standard age calculation purposes but may differ from age calculations used by specific government agencies or institutions that follow different conventions (such as calculating age as on a specific cutoff date). Always verify the age requirement for official documents and forms.</p>
-            </section>
-
-            <section>
-              <h2>BMI Calculator Disclaimer</h2>
-              <p>The BMI Calculator provides a Body Mass Index value based on height and weight. BMI is a general screening tool and is not a diagnostic measure. It does not account for muscle mass, bone density, age, gender, or ethnic differences. A high BMI does not necessarily indicate poor health, and a normal BMI does not guarantee good health. Always consult a healthcare professional for personalised health advice.</p>
-            </section>
-
-            <section>
-              <h2>GST Calculator Disclaimer</h2>
-              <p>The GST Calculator provides estimates based on standard GST rates (5%, 12%, 18%, 28%). Actual GST calculations may vary depending on specific product classifications, state-level regulations, exemptions, and input tax credit rules. The results are for reference only and should not be used as the basis for tax filings or official invoices. Consult a chartered accountant for GST-related decisions.</p>
-            </section>
-
-            <section>
-              <h2>Percentage Calculator Disclaimer</h2>
-              <p>The Percentage Calculator performs basic mathematical calculations. While the arithmetic is accurate, the relevance and applicability of the results depend on the context in which they are used. The calculator is a tool for convenience and should not be relied upon for critical financial or academic decisions without independent verification.</p>
-            </section>
-
-            <section>
-              <h2>CGPA Calculator Disclaimer</h2>
-              <p>The CGPA Calculator computes a credit-weighted grade point average based on the standard formula. Different institutions may use different grading scales, conversion factors, or calculation methods. Always refer to your institution's official grading policy for academic records, transcripts, and applications.</p>
-            </section>
-
-            <section>
-              <h2>Professional Advice</h2>
-              <p>None of the calculators or content on Calc Notebook constitutes professional financial, medical, legal, or academic advice. The website and its creators shall not be held responsible for any decisions made or actions taken based on the information or results provided by these tools. Always consult a qualified professional for advice specific to your situation.</p>
-            </section>
-
-            <section>
-              <h2>External Links</h2>
-              <p>Calc Notebook may contain links to external websites. We do not endorse or take responsibility for the content, privacy practices, or accuracy of information on any third-party websites.</p>
-            </section>
+          <div className="notice-banner">
+            <p><strong>Please read carefully.</strong> Every figure produced by this Website is an estimate for general guidance and education. It is not a quote, approval, valuation, diagnosis, or legal certification. Before making any significant financial, legal, health, or academic decision, verify the numbers with the responsible professional or the official issuing authority in your specific case.</p>
           </div>
+
+          <div className="notice-grid">
+            {toolDisclaimers.map((tool) => (
+              <div className="notice-card" key={tool.title}>
+                <span className="notice-tag">{tool.tag}</span>
+                <strong>{tool.title}</strong>
+                <p>{tool.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <section className="disclaimer-note-section">
+            <h2>General statements</h2>
+            <p>Calc Notebook, its owners, operators, and contributors publish content for educational purposes in good faith. We make no warranties about the accuracy, completeness, fitness for a particular purpose, or timeliness of any calculator result or article. To the fullest extent permitted by law, we accept no responsibility for any loss, expense, or damage that may arise from reliance on the information or results provided.</p>
+          </section>
+
+          <section className="disclaimer-note-section">
+            <h2>Why accuracy matters for stamp duty</h2>
+            <p>Registration deeds and stamp duty are legal matters with consequences. Women may be entitled to reduced rates or refunds only under the precise categories prescribed by state law, joint ownership applies based on the buyers named in the actual purchase document, and circle rates are set by district notification. Using our calculator to prepare an exact figure for a real registration would be a mistake. It is a planning tool; the final amount is decided by the registrar’s office under current rules.</p>
+          </section>
+
+          <section className="disclaimer-note-section">
+            <h2>Health, finance, and academics</h2>
+            <p>Nothing on this Website — including the BMI, EMI, GST, CGPA, Age, or Percentage tools — constitutes medical, financial, accounting, legal, tax, or academic advice, nor does it create a professional relationship of any kind. Always consult a qualified professional for decisions that affect your health, money, legal rights, or education.</p>
+          </section>
+
+          <section className="disclaimer-note-section">
+            <h2>Changes and acceptance</h2>
+            <p>We may revise this Disclaimer at any time. Revised versions will be published on this page with an updated date. By continuing to use Calc Notebook, you accept this Disclaimer and the Terms and Conditions of the Website. If you do not accept them, please stop using the Website.</p>
+          </section>
         </article>
 
         <SiteFooter />
