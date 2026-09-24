@@ -278,32 +278,47 @@ function ensureSupabaseSync() {
 }
 
 /*
- * Union of remote rows and current local posts. For the same slug the local
- * version wins, because the admin edits/toggles are written to localStorage
- * synchronously and are the source of truth for this browser.
+ * Merge, never replace: remote rows are added where we have no local post.
+ * On slug conflicts the newer updatedAt wins (local wins ties). This keeps a
+ * stale in-flight fetch from overwriting recent local toggles/edits, and it
+ * never touches posts the change didn't involve.
  */
 function mergeRemotePosts(remote: PostRow[], local: BlogPost[]): BlogPost[] {
   const bySlug = new Map<string, BlogPost>();
-  for (const row of remote) bySlug.set(row.slug, rowToPost(row));
   for (const post of local) bySlug.set(post.slug, post);
+  for (const row of remote) {
+    const incoming = rowToPost(row);
+    const current = bySlug.get(incoming.slug);
+    if (!current) {
+      bySlug.set(incoming.slug, incoming);
+      continue;
+    }
+    const currentAt = new Date(current.updatedAt ?? current.date).getTime() || 0;
+    const incomingAt = new Date(incoming.updatedAt ?? incoming.date).getTime() || 0;
+    if (incomingAt > currentAt) bySlug.set(incoming.slug, incoming);
+  }
   return Array.from(bySlug.values());
 }
 
 /*
- * Applies the change to the local store immediately and mirrors the whole
- * list to Supabase afterwards (best-effort). Applying locally first means a
- * toggle/edit always works even if Supabase is unreachable, and it never has
- * to wait on network timing — each post stays fully independent.
+ * Single-row Supabase sync. Each mutation writes ONLY the post it touched, so
+ * one blog's status can never rewrite another blog's status.
  */
-async function pushToSupabase(changes: () => void): Promise<void> {
-  changes();
+async function syncRow(post: BlogPost): Promise<void> {
   if (!canUseSupabase()) return;
   try {
-    const supabase = getSupabase();
-    const rows = posts.map(postToRow);
-    await supabase.from('posts').upsert(rows, { onConflict: 'slug' });
+    await getSupabase().from('posts').upsert(postToRow(post), { onConflict: 'slug' });
   } catch {
-    // Best-effort mirror: if Supabase write fails, the local store remains source of truth.
+    // Best-effort mirror: local store remains the source of truth.
+  }
+}
+
+async function removeRow(slug: string): Promise<void> {
+  if (!canUseSupabase()) return;
+  try {
+    await getSupabase().from('posts').delete().eq('slug', slug);
+  } catch {
+    // Best-effort mirror: local store remains the source of truth.
   }
 }
 
@@ -403,10 +418,9 @@ export function createBlogPost(draft: BlogPostDraft): BlogPost {
     },
     draft,
   );
-  void pushToSupabase(() => {
-    posts = [post, ...posts];
-    publish();
-  });
+  posts = [post, ...posts];
+  publish();
+  void syncRow(post);
   return post;
 }
 
@@ -418,32 +432,34 @@ export function updateBlogPost(slug: string, draft: BlogPostDraft): BlogPost | u
     slug: draft.slug ? uniqueSlug(slugify(draft.slug), slug) : uniqueSlug(slugify(draft.title), slug),
     date: existing.date,
   };
-  void pushToSupabase(() => {
-    posts = posts.map((post) => (post.slug === slug ? next : post));
-    publish();
-  });
+  posts = posts.map((post) => (post.slug === slug ? next : post));
+  publish();
+  void syncRow(next);
   return next;
 }
 
 export function deleteBlogPost(slug: string): void {
-  void pushToSupabase(() => {
-    posts = posts.filter((post) => post.slug !== slug);
-    publish();
-  });
+  posts = posts.filter((post) => post.slug !== slug);
+  publish();
+  void removeRow(slug);
 }
 
 /*
  * Public visibility toggle. ON = published (visible on the public blog),
  * OFF = draft (hidden from the site but still saved in the admin).
+ *
+ * Only this one post is changed — no other post's status or ordering is
+ * affected. updatedAt is deliberately NOT bumped here: the admin list sorts
+ * by updatedAt, and bumping it made the toggled row jump to the top (which
+ * looked like the newest blog was being toggled off).
  */
 export function setPostStatus(slug: string, status: PostStatus): BlogPost | undefined {
   const existing = posts.find((post) => post.slug === slug);
   if (!existing) return undefined;
-  const next: BlogPost = { ...existing, status, updatedAt: isoNow() };
-  void pushToSupabase(() => {
-    posts = posts.map((post) => (post.slug === slug ? next : post));
-    publish();
-  });
+  const next: BlogPost = { ...existing, status };
+  posts = posts.map((post) => (post.slug === slug ? next : post));
+  publish();
+  void syncRow(next);
   return next;
 }
 
