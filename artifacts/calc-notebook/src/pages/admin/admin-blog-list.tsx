@@ -7,6 +7,8 @@ import {
   getCalculatorCategories,
   addCalculatorCategory,
   removeCalculatorCategory,
+  getBlogSyncError,
+  refreshBlogPosts,
   setPostStatus,
   useBlogPosts,
   type BlogCategory,
@@ -56,6 +58,7 @@ export default function BlogListView() {
       return matchesQuery && matchesCategory;
     });
   }, [sorted, query, category]);
+  const syncError = getBlogSyncError();
 
   return (
     <div className="asb-content">
@@ -63,6 +66,14 @@ export default function BlogListView() {
         <CategoriesManager onBack={() => setLocation(adminPath('/blog'))} />
       ) : (
         <>
+          {syncError && (
+            <div className="asb-error" role="alert">
+              <span>Blog sync is unavailable. Changes are currently local only.</span>
+              <button type="button" className="asb-btn asb-btn-soft" onClick={() => refreshBlogPosts()}>
+                Retry
+              </button>
+            </div>
+          )}
           <div className="asb-head-row">
             <div>
               <h2 className="asb-page-title">Blog posts</h2>

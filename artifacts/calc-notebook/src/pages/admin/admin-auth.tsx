@@ -9,6 +9,7 @@ import {
 } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { getSupabase } from '@/lib/supabase';
+import { refreshBlogPosts } from '@/data/blogData';
 
 type AdminAuthContextValue = {
   session: Session | null;
@@ -32,6 +33,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabase();
 
     supabase.auth.getSession().then(({ data }) => {
+      refreshBlogPosts();
       if (!active) return;
       setSession(data.session);
       setLoading(false);
@@ -39,6 +41,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (_event, currentSession) => {
+        refreshBlogPosts();
         if (!active) return;
         setSession(currentSession);
         setLoading(false);

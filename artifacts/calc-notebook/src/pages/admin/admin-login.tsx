@@ -39,11 +39,6 @@ export default function AdminLogin() {
     setLocation(DASHBOARD_PATH);
   };
 
-  const startRecovery = () => {
-    const query = email.trim() ? `?email=${encodeURIComponent(email.trim())}` : '';
-    setLocation(`/manage-portal-x7k9/recovery${query}`);
-  };
-
   const inputShell = 'admin-input-shell';
   const inputField = 'admin-input-field';
 
@@ -95,9 +90,6 @@ export default function AdminLogin() {
               {submitting ? <Loader2 size={18} className="admin-spin" /> : <ArrowRight size={18} />}
             </button>
           </form>
-          <p className="admin-login-forgot">
-            <button type="button" onClick={startRecovery}>Forgot password?</button>
-          </p>
         </div>
       </div>
     </AdminShell>

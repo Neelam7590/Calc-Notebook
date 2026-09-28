@@ -89,6 +89,12 @@ let posts: BlogPost[] = loadPosts();
 let version = 0;
 let synced = false;
 let syncing = false;
+let queuedSync = false;
+let syncError: string | null = null;
+let lastAuthUserId: string | null = null;
+let authResolved = false;
+let sessionUserId: string | null | undefined;
+let authCleanup: (() => void) | null = null;
 const listeners = new Set<() => void>();
 
 function persist() {
@@ -104,6 +110,12 @@ function publish() {
   version += 1;
   persist();
   listeners.forEach((listener) => listener());
+}
+
+function setSyncError(message: string | null) {
+  if (syncError === message) return;
+  syncError = message;
+  publish();
 }
 
 function subscriber(listener: () => void): () => void {
@@ -244,37 +256,110 @@ const canUseSupabase = memoize(() => {
   }
 });
 
-function ensureSupabaseSync() {
-  if (typeof window === 'undefined') return;
-  if (synced || syncing) return;
+/*
+ * Session lookup is memoized per identity: the auth callback clears it when the
+ * signed-in user actually changes, so a sync never calls getSession twice.
+ */
+async function getSessionUserId(): Promise<string | null> {
+  if (sessionUserId !== undefined) return sessionUserId;
+  const { data, error } = await getSupabase().auth.getSession();
+  if (error) {
+    console.error('blogData: Supabase getSession failed.', error);
+    throw error;
+  }
+  sessionUserId = data.session?.user.id ?? null;
+  return sessionUserId;
+}
+
+/*
+ * The only automatic sync trigger. The first auth event only records the current
+ * identity — the page-load sync already covered it. A later sign-in, sign-out or
+ * account switch re-arms the sync exactly once.
+ */
+function setupSupabaseListeners() {
+  if (typeof window === 'undefined' || authCleanup) return;
+  if (!canUseSupabase()) return;
+
+  const supabase = getSupabase();
+  const { data: authData } = supabase.auth.onAuthStateChange((_event, session) => {
+    const nextUserId = session?.user.id ?? null;
+    const isNewIdentity = authResolved && nextUserId !== lastAuthUserId;
+    authResolved = true;
+    lastAuthUserId = nextUserId;
+    if (!isNewIdentity) return;
+    sessionUserId = undefined;
+    synced = false;
+    void syncRemotePosts();
+  });
+
+  authCleanup = () => {
+    authData.subscription.unsubscribe();
+  };
+}
+
+/*
+ * Single run per sign-in / page load. On failure the error is logged once and
+ * the sync stops: `synced` stays true so nothing re-triggers it, and a queued
+ * run is dropped instead of retried.
+ */
+async function syncRemotePosts() {
+  if (syncing) {
+    queuedSync = true;
+    return;
+  }
   if (!canUseSupabase()) {
     synced = true;
     return;
   }
+
+  setupSupabaseListeners();
   syncing = true;
-  void (async () => {
-    try {
-      const supabase = getSupabase();
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('date', { ascending: false });
-      if (!error && data && (data as PostRow[]).length > 0) {
-        // Merge, never replace: remote rows are added only where we have no
-        // local post, and a local post always wins on slug conflicts. Without
-        // this, a fetch that started before a toggle/edit would overwrite the
-        // whole list with stale statuses (making several posts flip off/on
-        // at once instead of just the one being changed).
-        posts = mergeRemotePosts(data as PostRow[], posts);
-        publish();
+  let failed = false;
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('date', { ascending: false });
+    if (error) throw error;
+    const remote = (data ?? []) as PostRow[];
+    if (await getSessionUserId()) {
+      const remoteSlugs = new Set(remote.map((row) => row.slug));
+      const localOnly = posts.filter((post) => !remoteSlugs.has(post.slug));
+      if (localOnly.length > 0) {
+        const { error: writeError } = await supabase
+          .from('posts')
+          .upsert(localOnly.map(postToRow), { onConflict: 'slug' });
+        if (writeError) throw writeError;
       }
-    } catch {
-      // Supabase unavailable (table missing, network, auth) -> keep localStorage data.
-    } finally {
-      syncing = false;
-      synced = true;
     }
-  })();
+    setSyncError(null);
+    if (remote.length > 0) {
+      posts = mergeRemotePosts(remote, posts);
+      publish();
+    }
+  } catch (error) {
+    failed = true;
+    console.error('blogData: Supabase sync failed.', error);
+    setSyncError(error instanceof Error ? error.message : 'Supabase sync failed.');
+  } finally {
+    syncing = false;
+    synced = true;
+    const runQueued = !failed && queuedSync;
+    queuedSync = false;
+    if (runQueued) void syncRemotePosts();
+  }
+}
+
+function ensureSupabaseSync() {
+  if (typeof window === 'undefined') return;
+  if (!canUseSupabase()) {
+    synced = true;
+    return;
+  }
+  setupSupabaseListeners();
+  if (synced || syncing) return;
+  void syncRemotePosts();
 }
 
 /*
@@ -307,24 +392,39 @@ function mergeRemotePosts(remote: PostRow[], local: BlogPost[]): BlogPost[] {
 async function syncRow(post: BlogPost): Promise<void> {
   if (!canUseSupabase()) return;
   try {
-    await getSupabase().from('posts').upsert(postToRow(post), { onConflict: 'slug' });
-  } catch {
-    // Best-effort mirror: local store remains the source of truth.
+    const { error } = await getSupabase().from('posts').upsert(postToRow(post), { onConflict: 'slug' });
+    if (error) throw error;
+    setSyncError(null);
+  } catch (error) {
+    console.error(`blogData: Supabase write failed for "${post.slug}".`, error);
+    setSyncError(error instanceof Error ? error.message : 'Supabase write failed.');
   }
 }
 
 async function removeRow(slug: string): Promise<void> {
   if (!canUseSupabase()) return;
   try {
-    await getSupabase().from('posts').delete().eq('slug', slug);
-  } catch {
-    // Best-effort mirror: local store remains the source of truth.
+    const { error } = await getSupabase().from('posts').delete().eq('slug', slug);
+    if (error) throw error;
+    setSyncError(null);
+  } catch (error) {
+    console.error(`blogData: Supabase delete failed for "${slug}".`, error);
+    setSyncError(error instanceof Error ? error.message : 'Supabase delete failed.');
   }
 }
 
 export function getBlogPosts(): BlogPost[] {
   ensureSupabaseSync();
   return posts;
+}
+
+export function getBlogSyncError(): string | null {
+  return syncError;
+}
+
+export function refreshBlogPosts(): void {
+  synced = false;
+  void syncRemotePosts();
 }
 
 export function subscribeBlogStore(listener: () => void): () => void {
@@ -403,7 +503,7 @@ function applyDraft(post: BlogPost, draft: BlogPostDraft): BlogPost {
   };
 }
 
-export function createBlogPost(draft: BlogPostDraft): BlogPost {
+export async function createBlogPost(draft: BlogPostDraft): Promise<BlogPost> {
   const post: BlogPost = applyDraft(
     {
       slug: draft.slug ? uniqueSlug(slugify(draft.slug)) : uniqueSlug(slugify(draft.title)),
@@ -418,13 +518,13 @@ export function createBlogPost(draft: BlogPostDraft): BlogPost {
     },
     draft,
   );
+  await syncRow(post);
   posts = [post, ...posts];
   publish();
-  void syncRow(post);
   return post;
 }
 
-export function updateBlogPost(slug: string, draft: BlogPostDraft): BlogPost | undefined {
+export async function updateBlogPost(slug: string, draft: BlogPostDraft): Promise<BlogPost | undefined> {
   const existing = posts.find((post) => post.slug === slug);
   if (!existing) return undefined;
   const next: BlogPost = {
@@ -432,16 +532,16 @@ export function updateBlogPost(slug: string, draft: BlogPostDraft): BlogPost | u
     slug: draft.slug ? uniqueSlug(slugify(draft.slug), slug) : uniqueSlug(slugify(draft.title), slug),
     date: existing.date,
   };
+  await syncRow(next);
   posts = posts.map((post) => (post.slug === slug ? next : post));
   publish();
-  void syncRow(next);
   return next;
 }
 
-export function deleteBlogPost(slug: string): void {
+export async function deleteBlogPost(slug: string): Promise<void> {
+  await removeRow(slug);
   posts = posts.filter((post) => post.slug !== slug);
   publish();
-  void removeRow(slug);
 }
 
 /*
@@ -449,14 +549,12 @@ export function deleteBlogPost(slug: string): void {
  * OFF = draft (hidden from the site but still saved in the admin).
  *
  * Only this one post is changed — no other post's status or ordering is
- * affected. updatedAt is deliberately NOT bumped here: the admin list sorts
- * by updatedAt, and bumping it made the toggled row jump to the top (which
- * looked like the newest blog was being toggled off).
+ * affected.
  */
 export function setPostStatus(slug: string, status: PostStatus): BlogPost | undefined {
   const existing = posts.find((post) => post.slug === slug);
   if (!existing) return undefined;
-  const next: BlogPost = { ...existing, status };
+  const next: BlogPost = { ...existing, status, updatedAt: isoNow() };
   posts = posts.map((post) => (post.slug === slug ? next : post));
   publish();
   void syncRow(next);

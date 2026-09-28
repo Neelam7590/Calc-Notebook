@@ -12,7 +12,7 @@ import { adminPath } from '@/pages/admin/admin-layout';
 
 export default function SettingsView() {
   const settings = useSiteSettings();
-  const { session, changePassword } = useAdminAuth();
+  const { session, signIn, changePassword } = useAdminAuth();
   const [, setLocation] = useLocation();
 
   const [siteName, setSiteName] = useState(settings.siteName);
@@ -20,6 +20,7 @@ export default function SettingsView() {
   const [email, setEmail] = useState(settings.contactEmail);
   const [saved, setSaved] = useState(false);
 
+  const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -39,18 +40,43 @@ export default function SettingsView() {
 
   const savePassword = async (event: FormEvent) => {
     event.preventDefault();
-    if (!password.trim()) {
+    const nextPassword = password.trim();
+    if (!currentPassword) {
+      setMessage({ type: 'error', text: 'Enter your current password.' });
+      return;
+    }
+    if (!nextPassword) {
       setMessage({ type: 'error', text: 'Enter a new password.' });
+      return;
+    }
+    if (nextPassword.length < 8) {
+      setMessage({ type: 'error', text: 'New password must be at least 8 characters.' });
+      return;
+    }
+    if (nextPassword === currentPassword) {
+      setMessage({ type: 'error', text: 'New password must be different from the current one.' });
+      return;
+    }
+    if (!accountEmail) {
+      setMessage({ type: 'error', text: 'Could not verify your current password.' });
       return;
     }
     setUpdating(true);
     setMessage(null);
-    const error = await changePassword(password.trim());
+    // Re-authenticate first: never change the password without proving we know it.
+    const signInError = await signIn(accountEmail, currentPassword);
+    if (signInError) {
+      setUpdating(false);
+      setMessage({ type: 'error', text: 'Current password is incorrect' });
+      return;
+    }
+    const error = await changePassword(nextPassword);
     setUpdating(false);
     if (error) {
       setMessage({ type: 'error', text: `Failed to update password: ${error}` });
     } else {
       setMessage({ type: 'success', text: 'Password updated successfully.' });
+      setCurrentPassword('');
       setPassword('');
     }
   };
@@ -101,6 +127,16 @@ export default function SettingsView() {
             <span className="asb-panel-title">Change password</span>
           </div>
           <div className="asb-panel-body">
+            <label className="asb-field">
+              <span className="asb-field-label">Current password</span>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                autoComplete="current-password"
+                placeholder="Enter your current password"
+              />
+            </label>
             <label className="asb-field">
               <span className="asb-field-label">New password</span>
               <input
