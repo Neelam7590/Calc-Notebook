@@ -3,7 +3,7 @@ artifacts/**/node_modules
 lib/**/node_modules
 scripts/node_modules
 artifacts/**/dist
-Calc-Notebook
+/Calc-Notebook/
 artifacts/**/vite-dev*.log
 .env
 artifacts/**/.env
