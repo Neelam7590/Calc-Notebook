@@ -48,6 +48,12 @@ Thumbs.db
 .cache/
 .local/
 
+# stale nested clone of this repo (has its own .git) - must never be committed
+/Calc-Notebook/
+
+# local dev server logs
+/artifacts/**/vite-dev*.log
+
 # env files (secrets - never commit)
 .env
 .env.*
