@@ -74,32 +74,37 @@ export default function Privacy() {
             </section>
 
             <section className="privacy-section">
-              <h2>4. Third-party services versus our own data handling</h2>
+              <h2>4. Google Analytics</h2>
+              <p>We use Google Analytics, a web analytics service provided by Google, to understand how visitors use CalcNotebook. Google Analytics uses cookies to collect information such as pages visited, time spent on the site, device and browser type, and approximate location. This data is anonymous and is used only to improve our calculators and content. We do not use it to identify you personally. You can opt out by installing the Google Analytics Opt-out Browser Add-on (https://tools.google.com/dlpage/gaoptout) or by disabling cookies in your browser settings. For more details, see Google's Privacy Policy at https://policies.google.com/privacy.</p>
+            </section>
+
+            <section className="privacy-section">
+              <h2>5. Third-party services versus our own data handling</h2>
               <p>When you interact with third parties — clicking an ad, following an external link, or visiting a service we reference — those parties operate under their own privacy policies. We do not control and cannot be responsible for their practices. The guarantee in this policy applies to our own website and the calculator experience we build.</p>
             </section>
 
             <section className="privacy-section">
-              <h2>5. Children’s privacy</h2>
+              <h2>6. Children’s privacy</h2>
               <p>Our tools are general-purpose and available to everyone. We do not knowingly collect personal information from children under 13, and because our calculators need neither accounts nor personal data, there is effectively nothing to collect even when the tools are used by younger visitors. If you believe a child’s personal information was provided to us through any channel, contact us so we can address it.</p>
             </section>
 
             <section className="privacy-section">
-              <h2>6. Data security</h2>
+              <h2>7. Data security</h2>
               <p>Because calculator inputs never reach our servers, the most sensitive data we could hold is not in our systems at all. The remaining technical data is transmitted over encrypted HTTPS connections where possible and handled according to standard security practices by our hosting and analytics providers. No system is absolutely secure, but our small data surface keeps risk minimal by design.</p>
             </section>
 
             <section className="privacy-section">
-              <h2>7. Your choices and rights</h2>
+              <h2>8. Your choices and rights</h2>
               <p>You can use the entire site without creating any account, and you can decline cookies or personalised ads without losing access to any calculator. Depending on where you live (such as under data-protection laws like the Digital Personal Data Protection Act in India or GDPR in Europe), you may have rights to access, correct, or delete personal data. Because we do not collect personal calculator data, in practice there is little to access or delete — but you may contact us with any request and we will do our best to help.</p>
             </section>
 
             <section className="privacy-section">
-              <h2>8. Changes to this policy</h2>
+              <h2>9. Changes to this policy</h2>
               <p>We may update this Privacy Policy from time to time as the site evolves or laws change. When we do, the "Last updated" date above will be revised and the new text will be posted here. We recommend reviewing it occasionally; continuing to use the Website means you accept the current policy.</p>
             </section>
 
             <section className="privacy-section">
-              <h2>9. Contact</h2>
+              <h2>10. Contact</h2>
               <p>Questions about this policy, data matters, or a request relating to your information are welcome through the contact details listed on the Website. We treat privacy questions seriously and will respond as quickly as we can.</p>
             </section>
           </div>
